@@ -103,8 +103,12 @@
     const losingSound = new Audio('https://example.com/losing-sound.mp3'); // Kaybetme sesi
     const confettiSound = new Audio('https://example.com/confetti-sound.mp3'); // Konfeti sesi
 
-    // 24 saatlik limitin sıfırlanması
-    localStorage.removeItem('lastSpinTime');
+    let lastSpinTime = localStorage.getItem('lastSpinTime');
+
+    if (lastSpinTime && (new Date() - new Date(lastSpinTime) < 24 * 60 * 60 * 1000)) {
+      alert('Çarkı sadece 24 saatte bir kez döndürebilirsiniz!');
+      btn.disabled = true; // 24 saatlik limit
+    }
 
     btn.addEventListener('click', () => {
       if (!instagramInput.value || !emailInput.value) {
@@ -149,8 +153,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
