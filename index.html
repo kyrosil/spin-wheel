@@ -1,436 +1,155 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Win with Kyrosil</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Win with Kyrosil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f7f7f7;
+      margin-top: 50px;
+    }
 
-    <style>
-        /* === CSS Kodları === */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f4; /* Biraz daha açık gri */
-            margin: 0;
-            overflow-x: hidden;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .container {
-            text-align: center;
-            background-color: #fff;
-            padding: 25px 35px;
-            border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            max-width: 100%;
-            width: 460px;
-            box-sizing: border-box;
-        }
-        h1 {
-            color: #2c3e50; /* Koyu mavi tonu */
-             font-size: 1.9em;
-             margin-bottom: 25px;
-             font-weight: 600;
-        }
-        .wheel-wrapper {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 25px auto;
-        }
-        .pointer {
-            position: absolute;
-            top: -22px; /* Biraz daha yukarı */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 16px solid transparent;
-            border-right: 16px solid transparent;
-            border-top: 28px solid #e74c3c; /* Kırmızı pointer */
-            z-index: 10;
-            filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.25));
-        }
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: relative;
-            overflow: hidden;
-            border: 5px solid #ecf0f1; /* Açık gri çerçeve */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15) inset, 0 5px 15px rgba(0, 0, 0, 0.1);
-            /* Mavi-Beyaz Dilimler (12 dilim) */
-            background-image: conic-gradient(
-                #3498db 0deg 30deg, #ffffff 30deg 60deg,
-                #3498db 60deg 90deg, #ffffff 90deg 120deg,
-                #3498db 120deg 150deg, #ffffff 150deg 180deg,
-                #3498db 180deg 210deg, #ffffff 210deg 240deg,
-                #3498db 240deg 270deg, #ffffff 270deg 300deg,
-                #3498db 300deg 330deg, #ffffff 330deg 360deg
-            );
-            /* Dönüş Animasyonu */
-            transition: transform 10s cubic-bezier(0.25, 0.1, 0.25, 1); /* Daha standart bir easing */
-        }
-        .wheel-logo {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 85px; /* Biraz daha büyük logo alanı */
-            height: 85px;
-            background-color: #ffffff; /* Beyaz arka plan */
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 12px rgba(0,0,0,0.15);
-            z-index: 5;
-            padding: 5px; /* İç boşluk */
-            box-sizing: border-box;
-        }
-        .wheel-logo img {
-            max-width: 90%; /* Logonun iç alana sığması için */
-            max-height: 90%;
-            object-fit: contain;
-            border-radius: 50%; /* Görüntüyü de yuvarlat (opsiyonel) */
-        }
-        .input-section {
-            margin-top: 30px;
-        }
-        .input-section p {
-            margin-bottom: 18px;
-            color: #555;
-            font-size: 0.95em;
-        }
-        .input-section input {
-            display: block;
-            width: calc(100% - 24px);
-            padding: 12px; /* Biraz daha geniş padding */
-            margin: 0 auto 12px auto;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
-        .spin-button {
-            padding: 14px 30px; /* Daha büyük buton */
-            font-size: 1.15em;
-            font-weight: 600;
-            background-color: #2ecc71; /* Yeşil */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            margin-top: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .spin-button:hover {
-            background-color: #27ae60;
-            transform: translateY(-2px); /* Hafif yukarı kalkma */
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-        .spin-button:active {
-            transform: translateY(1px); /* Tıklama anı */
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-        }
-        .spin-button:disabled {
-            background-color: #bdc3c7; /* Pasif renk */
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            animation: none; /* Pasifken animasyon olmasın */
-        }
-        /* Sonuç Ekranı */
-        .result-popup {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.65);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 100;
-             opacity: 0; visibility: hidden;
-             transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .result-popup.show { opacity: 1; visibility: visible; }
-        .popup-content {
-            background-color: white; padding: 35px 45px; border-radius: 12px;
-            text-align: center; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-            max-width: 90%; width: 380px;
-        }
-        .popup-content h2 { margin-top: 0; color: #333; font-size: 1.6em; margin-bottom: 15px;}
-        .popup-content p { font-size: 1.1em; color: #555; margin-bottom: 25px;}
-        #close-popup {
-            padding: 11px 22px; background-color: #e74c3c; color: white;
-            border: none; border-radius: 6px; cursor: pointer;
-            font-size: 1em; transition: background-color 0.2s ease;
-        }
-        #close-popup:hover { background-color: #c0392b; }
-        /* Mobil Uyumluluk */
-        @media (max-width: 480px) {
-             body { align-items: flex-start; padding-top: 15px; }
-             .container { width: 95%; padding: 20px 20px; }
-             .wheel-wrapper { width: 250px; height: 250px; margin: 20px auto;}
-             .pointer { border-left-width: 14px; border-right-width: 14px; border-top-width: 24px; top: -18px;}
-             .wheel-logo { width: 65px; height: 65px; }
-             h1 { font-size: 1.6em; margin-bottom: 20px; }
-             .input-section input { width: calc(100% - 22px); padding: 11px; }
-             .spin-button { padding: 12px 25px; font-size: 1.05em; }
-             .popup-content { padding: 25px 30px; width: 90%; }
-             .popup-content h2 {font-size: 1.4em;}
-             .popup-content p {font-size: 1em;}
-        }
-    </style>
+    #wheel {
+      width: 300px;
+      height: 300px;
+      border: 10px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      transition: transform 10s ease-out; /* 10 saniye dönüş süresi */
+      background: conic-gradient(
+        #2196f3 0deg 60deg, 
+        #9c27b0 60deg 120deg, 
+        #2196f3 120deg 180deg, 
+        #9c27b0 180deg 240deg, 
+        #2196f3 240deg 300deg, 
+        #9c27b0 300deg 360deg
+      );
+    }
+
+    #logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 80px;
+      height: 80px;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 50%;
+      padding: 10px;
+      z-index: 10;
+    }
+
+    #spinBtn {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background: #2196f3;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .pointer {
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 20px solid #333;
+      margin: 20px auto;
+    }
+
+    #emailInput, #instagramInput {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Win with Kyrosil</h1>
-
-        <div class="wheel-wrapper">
-            <div class="pointer">▼</div>
-            <div class="wheel" id="wheel">
-                <div class="wheel-logo">
-                    <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
-                </div>
-            </div>
-        </div>
-
-        <div class="input-section" id="input-section">
-            <p>Kazanmak için bilgilerinizi girin ve çevirin!</p>
-            <input type="email" id="email" placeholder="E-posta Adresiniz" required>
-            <input type="text" id="instagram" placeholder="Instagram Kullanıcı Adınız" required>
-            <button class="spin-button" id="spin-button">Çarkı Çevir!</button>
-        </div>
-
-        <div class="result-popup" id="result-popup">
-            <div class="popup-content">
-                <h2 id="result-title">Tebrikler!</h2>
-                <p id="result-message">Harika bir ödül kazandınız!</p>
-                <button id="close-popup">Kapat</button>
-            </div>
-        </div>
-
-        <audio id="click-sound" src="click.mp3" preload="auto"></audio>
-        <audio id="win-sound" src="win.mp3" preload="auto"></audio>
-        <audio id="lose-sound" src="lose.mp3" preload="auto"></audio>
+  <h1>Win with Kyrosil</h1>
+  <div id="wheel">
+    <div id="logo">
+      <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
     </div>
+  </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elementleri
-            const wheel = document.getElementById('wheel');
-            const spinButton = document.getElementById('spin-button');
-            const emailInput = document.getElementById('email');
-            const instagramInput = document.getElementById('instagram');
-            const resultPopup = document.getElementById('result-popup');
-            const resultTitle = document.getElementById('result-title');
-            const resultMessage = document.getElementById('result-message');
-            const closePopupButton = document.getElementById('close-popup');
-            const clickSound = document.getElementById('click-sound');
-            const winSound = document.getElementById('win-sound');
-            const loseSound = document.getElementById('lose-sound');
+  <input type="text" id="instagramInput" placeholder="Instagram Kullanıcı Adınızı Girin" />
+  <input type="email" id="emailInput" placeholder="Email adresinizi girin" />
+  <button id="spinBtn">Spin</button>
+  <div id="result"></div>
 
-            // Ayarlar
-            const segmentCount = 12;
-            const segments = [ // Ödülleriniz
-                { label: "10% İndirim", type: "win" }, { label: "Tekrar Dene", type: "lose" },
-                { label: "Ücretsiz Kargo", type: "win" }, { label: "Tekrar Dene", type: "lose" },
-                { label: "Sürpriz Hediye", type: "win" }, { label: "Tekrar Dene", type: "lose" },
-                { label: "10% İndirim", type: "win" }, { label: "Tekrar Dene", type: "lose" },
-                { label: "Ücretsiz Kargo", type: "win" }, { label: "Tekrar Dene", type: "lose" },
-                { label: "Sürpriz Hediye", type: "win" }, { label: "Tekrar Dene", type: "lose" },
-            ];
-            const segmentAngle = 360 / segmentCount;
-            const spinDurationSeconds = 10; // CSS ile aynı olmalı
-            const minSpins = 5;
-            const localStorageKey = 'kyrosilWheelLastSpin_v1'; // Anahtar adını değiştirmek eski kilitleri sıfırlar
-            const lockDurationHours = 24;
+  <script>
+    const wheel = document.getElementById('wheel');
+    const result = document.getElementById('result');
+    const btn = document.getElementById('spinBtn');
+    const instagramInput = document.getElementById('instagramInput');
+    const emailInput = document.getElementById('emailInput');
 
-            let isSpinning = false;
-            let clickInterval;
-            let determinedWinnerSegment = null; // Dönüş başlamadan belirlenen sonuç
+    const segments = ["10% Off", "Free Shipping", "Nothing 😢", "5% Off", "Mystery Prize", "15% Off"];
+    const winningSound = new Audio('https://example.com/winning-sound.mp3'); // Kazanma sesi
+    const losingSound = new Audio('https://example.com/losing-sound.mp3'); // Kaybetme sesi
+    const confettiSound = new Audio('https://example.com/confetti-sound.mp3'); // Konfeti sesi
 
-            // === Fonksiyonlar ===
-            function checkSpinLock() {
-                const lastSpinTime = localStorage.getItem(localStorageKey);
-                if (!lastSpinTime) return false;
-                const timeDiff = Date.now() - parseInt(lastSpinTime, 10);
-                return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
-            }
+    let lastSpinTime = localStorage.getItem('lastSpinTime');
 
-            function setSpinLock() {
-                localStorage.setItem(localStorageKey, Date.now().toString());
-            }
+    if (lastSpinTime && (new Date() - new Date(lastSpinTime) < 24 * 60 * 60 * 1000)) {
+      alert('Çarkı sadece 24 saatte bir kez döndürebilirsiniz!');
+      btn.disabled = true; // 24 saatlik limit
+    }
 
-            function playSound(soundElement) {
-                if (soundElement && typeof soundElement.play === 'function') {
-                    soundElement.currentTime = 0;
-                    soundElement.play().catch(e => console.warn("Ses çalınamadı:", e));
-                }
-            }
+    btn.addEventListener('click', () => {
+      if (!instagramInput.value || !emailInput.value) {
+        alert('Instagram kullanıcı adınızı ve email adresinizi girin!');
+        return;
+      }
 
-            function startClickSoundLoop() {
-                stopClickSoundLoop();
-                const playLoop = () => {
-                    if (!isSpinning) return;
-                    playSound(clickSound);
-                    // Zamanlamayı biraz daha rastgele yapalım
-                    clickInterval = setTimeout(playLoop, 120 + Math.random() * 80);
-                };
-                playLoop();
-            }
+      const spinAngle = Math.floor(Math.random() * 360) + 1440; // Minimum 4 dönüş
+      wheel.style.transform = `rotate(${spinAngle}deg)`;
+      const normalizedAngle = spinAngle % 360;
+      const selectedIndex = Math.floor((360 - normalizedAngle + 30) % 360 / 60);
 
-            function stopClickSoundLoop() {
-                clearTimeout(clickInterval);
-            }
+      setTimeout(() => {
+        result.textContent = "You won: " + segments[selectedIndex];
 
-            function validateInputs() {
-                // Trim() ile baş/sondaki boşlukları temizle
-                const emailValue = emailInput.value.trim();
-                const instagramValue = instagramInput.value.trim();
+        // Ses efektleri
+        if (segments[selectedIndex] === "Nothing 😢") {
+          losingSound.play();
+        } else {
+          winningSound.play();
+          confettiSound.play(); // Konfeti
+        }
 
-                if (!emailValue || !instagramValue) {
-                    alert("LÜTFEN E-POSTA VE INSTAGRAM BİLGİLERİNİZİ GİRİNİZ!");
-                    return false;
-                }
-                if (!/\S+@\S+\.\S+/.test(emailValue)) { // Basit format kontrolü
-                    alert("Lütfen geçerli bir e-posta adresi girin.");
-                    return false;
-                }
-                return true;
-            }
+        // Kazanan bilgileri mail ile gönderme
+        fetch('https://your-mail-api.com/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: 'spinwheel@kyrosil.eu',
+            subject: 'Kazanan Ödül!',
+            text: `Kazanan: ${instagramInput.value}\nEmail: ${emailInput.value}\nÖdül: ${segments[selectedIndex]}`,
+          }),
+        });
 
-            function spinWheel() {
-                if (isSpinning) return; // Zaten dönüyorsa engelle
+        // LocalStorage güncellemesi
+        localStorage.setItem('lastSpinTime', new Date().toISOString());
 
-                if (checkSpinLock()) {
-                    alert(`Üzgünüz, çarkı ${lockDurationHours} saatte sadece bir kez çevirebilirsiniz.`);
-                    return;
-                }
-
-                if (!validateInputs()) return; // Inputlar geçerli değilse engelle
-
-                isSpinning = true;
-                spinButton.disabled = true; // Butonu pasif yap
-                determinedWinnerSegment = null; // Önceki sonucu temizle
-
-                // Sonucu ŞİMDİ belirle (animasyon başlamadan)
-                const winningSegmentIndex = Math.floor(Math.random() * segmentCount);
-                determinedWinnerSegment = segments[winningSegmentIndex];
-
-                // Görsel animasyon için hedef açıyı hesapla
-                const targetAngle = (winningSegmentIndex * segmentAngle) + (segmentAngle / 2);
-                const randomExtraRotation = Math.floor(Math.random() * 360);
-                const totalRotation = (minSpins * 360) + targetAngle + randomExtraRotation;
-
-                // Wheel elementinin varlığını kontrol et
-                if (!wheel) {
-                    console.error("Çark elementi bulunamadı, dönüş başlatılamıyor.");
-                    isSpinning = false; // Durumu sıfırla
-                    spinButton.disabled = false; // Butonu tekrar aktif et
-                    return;
-                }
-
-                // Transition ve Transform uygula
-                wheel.style.transition = `transform ${spinDurationSeconds}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-                // Transform'u uygulamadan önce tarayıcının hazır olmasını sağla
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                         wheel.style.transform = `rotate(${totalRotation}deg)`;
-                    });
-                 });
-
-                startClickSoundLoop(); // Tıklama seslerini başlat
-
-                // Transition bitişini dinle
-                wheel.removeEventListener('transitionend', handleSpinEnd); // Önceki listener'ı kaldır
-                wheel.addEventListener('transitionend', handleSpinEnd, { once: true });
-            }
-
-            function handleSpinEnd(event) {
-                // Sadece 'transform' bittiğinde ve hala 'isSpinning' durumundaysa çalış
-                if (event.propertyName !== 'transform' || !isSpinning) {
-                    return;
-                }
-
-                isSpinning = false; // Dönme durumunu bitir
-                stopClickSoundLoop(); // Tıklama seslerini durdur
-
-                // Sonucu zaten biliyoruz (determinedWinnerSegment)
-                if (determinedWinnerSegment) {
-                    showResult(determinedWinnerSegment);
-                } else {
-                    // Beklenmedik bir durum, varsayılan bir 'kayıp' sonucu göster
-                    console.error("Dönüş bitti ancak sonuç belirlenmemişti!");
-                    showResult(segments.find(s => s.type === 'lose') || segments[1]);
-                }
-
-                setSpinLock(); // Kilidi şimdi ayarla
-                // Buton kilitli kalmalı (checkSpinLock sonraki tıklamada engelleyecek)
-            }
-
-            function showResult(result) {
-                resultTitle.textContent = result.type === 'win' ? '🎉 Tebrikler! 🎉' : 'Malesef!';
-                resultMessage.textContent = result.label;
-
-                if (result.type === 'win') {
-                    playSound(winSound);
-                    triggerConfetti(); // Sadece kazanınca konfeti
-                } else {
-                    playSound(loseSound);
-                }
-
-                 // Popup'ın varlığını kontrol et
-                 if(resultPopup) {
-                    resultPopup.classList.add('show');
-                 } else {
-                     console.error("Sonuç popup elementi bulunamadı!");
-                 }
-            }
-
-            function triggerConfetti() {
-                if (typeof confetti === 'function') {
-                    confetti({
-                        particleCount: 180, // Daha fazla
-                        spread: 100,       // Daha geniş
-                        origin: { y: 0.6 }
-                    });
-                } else {
-                    console.warn("Konfeti fonksiyonu (confetti) bulunamadı.");
-                }
-            }
-
-            // === Olay Dinleyicileri ===
-            if (spinButton) {
-                spinButton.addEventListener('click', spinWheel);
-            } else {
-                console.error("Spin butonu elementi bulunamadı!");
-            }
-
-             if (closePopupButton) {
-                 closePopupButton.addEventListener('click', () => {
-                     if(resultPopup) {
-                         resultPopup.classList.remove('show');
-                     }
-                 });
-             } else {
-                 console.error("Popup kapatma butonu bulunamadı!");
-             }
-
-
-            // Sayfa Yüklendiğinde İlk Kontrol
-            if (checkSpinLock()) {
-                if(spinButton) {
-                     spinButton.disabled = true; // Kilit varsa butonu pasif yap
-                }
-            } else {
-                 if(spinButton) {
-                     spinButton.disabled = false; // Kilit yoksa buton aktif
-                 }
-            }
-        }); // DOMContentLoaded Sonu
-    </script>
+      }, 10000); // 10 saniye bekle, dönüş tamamlanmadan önce
+    });
+  </script>
 </body>
 </html>
