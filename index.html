@@ -10,20 +10,33 @@
         /* === CSS === */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            display: flex; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; /* Dikey hizalama için */
+            justify-content: center; align-items: center;
             min-height: 100vh; background-color: #f4f4f4;
-            margin: 0; overflow-x: hidden; padding: 10px; box-sizing: border-box;
+            margin: 0; overflow-x: hidden; padding: 20px 10px; /* Üst/alt boşluk */
+            box-sizing: border-box;
         }
         .container {
             text-align: center; background-color: #fff; padding: 25px 35px;
             border-radius: 18px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            max-width: 100%; width: 460px; box-sizing: border-box;
+            max-width: 100%; width: 480px; /* Biraz daha geniş */
+            box-sizing: border-box; margin-bottom: 20px; /* Altına boşluk */
         }
         h1 {
-            color: #2c3e50; font-size: 1.9em; margin-bottom: 25px; font-weight: 600;
+            color: #2c3e50; font-size: 2em; /* Biraz daha büyük */
+            margin-bottom: 25px; font-weight: 600;
+        }
+
+        /* --- Wheel --- */
+        .wheel-container { /* Wrapper for alignment */
+             margin-bottom: 30px;
         }
         .wheel-wrapper {
-            position: relative; width: 300px; height: 300px; margin: 25px auto;
+            position: relative;
+            width: 320px; /* Biraz daha büyük çark alanı */
+            height: 320px;
+            margin: 25px auto;
+            padding: 0; list-style: none; /* For label container */
         }
         .pointer {
             position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
@@ -31,11 +44,40 @@
             border-right: 16px solid transparent; border-top: 28px solid #e74c3c;
             z-index: 10; filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.25));
         }
-        .wheel {
+        /* Prize Labels Container */
+        .wheel-labels {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%; pointer-events: none; /* Tıklamayı engelle */
+            /* background: rgba(255, 0, 0, 0.1); */ /* Debugging için */
+            z-index: 6; /* Logonun altında, çarkın üstünde */
+        }
+        /* Individual Prize Label */
+        .prize-label {
+            display: block;
+            position: absolute;
+            top: 50%; left: 50%; /* Merkezden başla */
+            width: 50%; /* Yarıçap kadar uzasın */
+            height: 40px; /* Yüksekliği ayarla */
+            line-height: 40px; /* Dikey ortala */
+            transform-origin: 0% 50%; /* Soldan/ortadan dönsün */
+            text-align: center;
+            font-size: 10px; /* Boyutu ayarla, küçük olabilir */
+            font-weight: 600;
+            color: #333;
+            /* background: rgba(0, 255, 0, 0.2); */ /* Debugging için */
+            padding-right: 15px; /* Yazıyı içeri it */
+            box-sizing: border-box;
+            overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+        }
+         .prize-label span { /* Emoji için */
+             display: inline-block; margin-right: 4px;
+         }
+
+        .wheel { /* The visual spinning part */
             width: 100%; height: 100%; border-radius: 50%; position: relative;
             overflow: hidden; border: 5px solid #ecf0f1;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15) inset, 0 5px 15px rgba(0, 0, 0, 0.1);
-            background-image: conic-gradient(
+            background-image: conic-gradient( /* 12 alternating slices */
                 #3498db 0deg 30deg, #ffffff 30deg 60deg, #3498db 60deg 90deg, #ffffff 90deg 120deg,
                 #3498db 120deg 150deg, #ffffff 150deg 180deg, #3498db 180deg 210deg, #ffffff 210deg 240deg,
                 #3498db 240deg 270deg, #ffffff 270deg 300deg, #3498db 300deg 330deg, #ffffff 330deg 360deg
@@ -44,13 +86,14 @@
         }
         .wheel-logo {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85px; height: 85px; background-color: #ffffff; border-radius: 50%;
+            width: 90px; height: 90px; /* Logoyu biraz büyüt */ background-color: #ffffff; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 12px rgba(0,0,0,0.15); z-index: 5; padding: 5px; box-sizing: border-box;
+            box-shadow: 0 0 12px rgba(0,0,0,0.15); z-index: 7; /* En üstte */ padding: 5px; box-sizing: border-box;
         }
         .wheel-logo img {
-            max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 50%;
+            max-width: 85%; max-height: 85%; object-fit: contain; border-radius: 50%;
         }
+        /* --- Inputs & Button --- */
         .input-section { margin-top: 30px; }
         .input-section p { margin-bottom: 18px; color: #555; font-size: 0.95em; }
         .input-section input {
@@ -58,43 +101,81 @@
             margin: 0 auto 12px auto; border: 1px solid #ccc;
             border-radius: 6px; box-sizing: border-box; font-size: 1em;
         }
-        .spin-button {
-            padding: 14px 30px; font-size: 1.15em; font-weight: 600;
-            background-color: #2ecc71; color: white; border: none; border-radius: 8px;
-            cursor: pointer; transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            margin-top: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .spin-button { /* Style unchanged */
+            padding: 14px 30px; font-size: 1.15em; font-weight: 600; background-color: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease; margin-top: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .spin-button:hover { background-color: #27ae60; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
         .spin-button:active { transform: translateY(1px); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); }
         .spin-button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; box-shadow: none; animation: none; }
-        .result-popup {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.65); display: flex;
-            justify-content: center; align-items: center; z-index: 100;
-             opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+
+        /* --- Prize List & Rules (Outside container) --- */
+        .info-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff; /* White background */
+            border-radius: 12px; /* Rounded corners */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            max-width: 100%;
+            width: 480px; /* Match container width */
+            box-sizing: border-box;
+            text-align: left; /* Align text left */
+        }
+         .info-section h4 {
+             margin-top: 0;
+             margin-bottom: 10px;
+             color: #2c3e50;
+             border-bottom: 1px solid #ecf0f1; /* Separator line */
+             padding-bottom: 8px;
+         }
+         .prize-list ul, .rules ul {
+             list-style: none; /* Remove default bullets */
+             padding: 0;
+             margin: 0;
+         }
+         .prize-list li, .rules li {
+             margin-bottom: 8px;
+             color: #555;
+             font-size: 0.9em;
+             display: flex; /* Align emoji and text */
+             align-items: center;
+         }
+         .prize-list li span { /* Emoji styling */
+             margin-right: 8px;
+             font-size: 1.1em;
+             display: inline-block;
+             width: 20px; /* Fixed width for alignment */
+             text-align: center;
+         }
+         .rules li::before { /* Custom bullet for rules */
+             content: "•";
+             color: #3498db; /* Blue bullet */
+             font-weight: bold;
+             display: inline-block;
+             width: 1em;
+             margin-left: -1em; /* Adjust position */
+             margin-right: 0.5em;
+         }
+        .rules { margin-top: 20px; }
+
+        /* Result Popup */
+        .result-popup { /* Style unchanged */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.65); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .result-popup.show { opacity: 1; visibility: visible; }
-        .popup-content {
-            background-color: white; padding: 35px 45px; border-radius: 12px;
-            text-align: center; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
-            max-width: 90%; width: 380px;
-        }
+        .popup-content { background-color: white; padding: 35px 45px; border-radius: 12px; text-align: center; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2); max-width: 90%; width: 380px; }
         .popup-content h2 { margin-top: 0; color: #333; font-size: 1.6em; margin-bottom: 15px;}
         .popup-content p { font-size: 1.1em; color: #555; margin-bottom: 25px;}
-        #close-popup {
-            padding: 11px 22px; background-color: #e74c3c; color: white;
-            border: none; border-radius: 6px; cursor: pointer;
-            font-size: 1em; transition: background-color 0.2s ease;
-        }
+        #close-popup { padding: 11px 22px; background-color: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; transition: background-color 0.2s ease; }
         #close-popup:hover { background-color: #c0392b; }
+
         /* Mobile */
-        @media (max-width: 480px) {
-             body { align-items: flex-start; padding-top: 15px; }
-             .container { width: 95%; padding: 20px 20px; }
-             .wheel-wrapper { width: 250px; height: 250px; margin: 20px auto;}
+        @media (max-width: 520px) { /* Adjust breakpoint */
+             .container, .info-section { width: 95%; padding: 20px 20px; }
+             .wheel-wrapper { width: 280px; height: 280px; } /* Adjust size */
              .pointer { border-left-width: 14px; border-right-width: 14px; border-top-width: 24px; top: -18px;}
-             .wheel-logo { width: 65px; height: 65px; }
-             h1 { font-size: 1.6em; margin-bottom: 20px; }
+             .wheel-logo { width: 75px; height: 75px; }
+             .prize-label { font-size: 9px; height: 35px; line-height: 35px; padding-right: 10px;}
+             h1 { font-size: 1.7em; }
              .input-section input { width: calc(100% - 22px); padding: 11px; }
              .spin-button { padding: 12px 25px; font-size: 1.05em; }
              .popup-content { padding: 25px 30px; width: 90%; }
@@ -106,12 +187,15 @@
 <body>
     <div class="container">
         <h1>Win with Kyrosil</h1>
-
-        <div class="wheel-wrapper">
-            <div class="pointer">▼</div>
-            <div class="wheel" id="wheel">
-                <div class="wheel-logo">
-                    <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
+        <div class="wheel-container">
+            <div class="wheel-wrapper" id="wheel-wrapper">
+                <div class="pointer">▼</div>
+                 <div class="wheel-labels" id="wheel-labels">
+                    </div>
+                <div class="wheel" id="wheel">
+                    <div class="wheel-logo">
+                        <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
+                    </div>
                 </div>
             </div>
         </div>
@@ -119,27 +203,45 @@
         <div class="input-section" id="input-section">
             <p>Enter your details and spin to win!</p>
             <input type="email" id="email" placeholder="Your Email Address" required>
-            <input type="text" id="instagram" placeholder="Your Instagram Handle" required>
-            <button class="spin-button" id="spin-button">Spin the Wheel!</button>
+            <input type="text" id="instagram" placeholder="Your Instagram Handle (@kyrosil)" required> <button class="spin-button" id="spin-button">Spin the Wheel!</button>
         </div>
-
-        <div class="result-popup" id="result-popup">
-            <div class="popup-content">
-                <h2 id="result-title">Congratulations!</h2>
-                <p id="result-message">You won a great prize!</p>
-                <button id="close-popup">Close</button>
-            </div>
-        </div>
-
-        <audio id="click-sound" src="click.mp3" preload="auto"></audio>
-        <audio id="win-sound" src="win.mp3" preload="auto"></audio>
-        <audio id="lose-sound" src="lose.mp3" preload="auto"></audio>
     </div>
+
+    <div class="info-section">
+        <div class="prize-list">
+            <h4>Possible Prizes</h4>
+            <ul id="prize-list-ul">
+                </ul>
+        </div>
+
+        <div class="rules">
+            <h4>Rules & Conditions</h4>
+            <ul>
+                <li>Spin once per 24 hours.</li>
+                <li>Must follow <a href="https://www.instagram.com/kyrosil/" target="_blank" rel="noopener noreferrer">@kyrosil</a> on Instagram to claim prize.</li>
+                <li>Winners will be contacted via the submitted email address.</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="result-popup" id="result-popup">
+        <div class="popup-content">
+            <h2 id="result-title">Congratulations!</h2>
+            <p id="result-message">You won a great prize!</p>
+            <button id="close-popup">Close</button>
+        </div>
+    </div>
+
+    <audio id="click-sound" src="click.mp3" preload="auto"></audio>
+    <audio id="win-sound" src="win.mp3" preload="auto"></audio>
+    <audio id="lose-sound" src="lose.mp3" preload="auto"></audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // DOM Elements
             const wheel = document.getElementById('wheel');
+            const wheelLabelsContainer = document.getElementById('wheel-labels'); // For prize labels on wheel
             const spinButton = document.getElementById('spin-button');
             const emailInput = document.getElementById('email');
             const instagramInput = document.getElementById('instagram');
@@ -150,104 +252,167 @@
             const clickSound = document.getElementById('click-sound');
             const winSound = document.getElementById('win-sound');
             const loseSound = document.getElementById('lose-sound');
+            const prizeListUl = document.getElementById('prize-list-ul'); // For external prize list
 
             // Settings
-            const visualSegmentCount = 12;
+            const visualSegmentCount = 12; // Keep 12 visual background slices
             const visualSegmentAngle = 360 / visualSegmentCount;
             const spinDurationSeconds = 10;
             const minSpins = 5;
-            const localStorageKey = 'kyrosilWheelLastSpin_v2_en';
+            const localStorageKey = 'kyrosilWheelLastSpin_v3_en_prizes'; // New key for new setup
             const lockDurationHours = 24;
 
-            // Prizes and Probabilities (MAKE SURE these sum to 100!)
+            // === NEW Prizes and Probabilities ===
+            // MAKE SURE probabilities sum to 100!
             const segments = [
-                { id: 'TRY_AGAIN', label: "Better Luck Next Time!", type: "lose", probability: 40 },
-                { id: '5_OFF', label: "A 5% Discount Code!", type: "win", probability: 25 },
-                { id: '10_OFF', label: "A 10% Discount Code!", type: "win", probability: 15 },
-                { id: 'FREE_SHIP', label: "Free Shipping on Your Next Order!", type: "win", probability: 10 },
-                { id: 'GIFT', label: "A Special Surprise Gift!", type: "win", probability: 7 },
-                { id: '20_OFF', label: "WOW! A 20% Discount Code!", type: "win", probability: 3 }
+                // { id: 'unique_code', label: "Prize Name", emoji: "❓", type: "win/lose", probability: chance% },
+                { id: 'TRY_AGAIN_1', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
+                { id: 'TRY_AGAIN_2', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
+                { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
+                { id: 'STARBUCKS', label: "$5 / ₺200 Starbucks", emoji: "☕", type: "win", probability: 5 },
+                { id: 'CARREFOUR', label: "€10 / ₺350 Carrefour", emoji: "🛒", type: "win", probability: 5 },
+                { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 5 },
+                { id: 'HOODIE', label: "Kyrosil Hoodie", emoji: "🧥", type: "win", probability: 5 },
+                { id: 'GREEK', label: "₺1500 Yunandan Gelsin", emoji: "🇬🇷", type: "win", probability: 4 }, // Moved up slightly
+                { id: 'IGA', label: "1 Day IGA PASS", emoji: "✈️", type: "win", probability: 0.8 },
+                { id: 'TURKISH_AIR', label: "$100 Turkish Airlines Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
+                 // Total: 25+25+25+5+5+5+5+4+0.8+0.2 = 100
             ];
-             const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
-             if (totalProb !== 100) { console.error(`Probabilities sum to ${totalProb}, not 100!`); }
+            const numberOfPrizes = segments.length; // Actual number of prize options
+
+             // Verify probabilities sum to 100
+            const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
+             // Use a tolerance for floating point issues
+             if (Math.abs(totalProb - 100) > 0.01) {
+                console.error(`Probabilities sum to ${totalProb}, not 100! Please fix the segments array.`);
+                alert("Configuration error! Please contact the administrator."); // Show error to user
+                if(spinButton) spinButton.disabled = true; // Disable button
+             }
+
 
             let isSpinning = false;
             let clickInterval;
             let determinedWinnerSegment = null;
 
             // === Functions ===
-            function determineWinnerByProbability(segmentData) {
-                const randomPick = Math.random() * 100;
-                let cumulativeProbability = 0;
-                for (const segment of segmentData) {
-                    cumulativeProbability += segment.probability;
-                    if (randomPick < cumulativeProbability) return segment;
-                }
+
+            // Function to populate prize labels around the wheel
+            function populatePrizeLabels() {
+                if (!wheelLabelsContainer) return;
+                wheelLabelsContainer.innerHTML = ''; // Clear existing labels
+
+                 // Angle adjustment to align labels better between slices if desired
+                const angleOffset = (360 / numberOfPrizes) / 2;
+
+                segments.forEach((segment, index) => {
+                    const labelElement = document.createElement('div');
+                    labelElement.classList.add('prize-label');
+
+                    // Calculate rotation for each label
+                    const angle = (index / numberOfPrizes) * 360 + angleOffset;
+                    labelElement.style.transform = `rotate(${angle}deg) translateY(-50%)`; // Rotate and center vertically
+
+                    // Add emoji and text
+                    labelElement.innerHTML = `<span>${segment.emoji || ''}</span> ${segment.label}`;
+                    wheelLabelsContainer.appendChild(labelElement);
+                });
+            }
+
+            // Function to populate the external prize list
+            function populateExternalPrizeList() {
+                if (!prizeListUl) return;
+                prizeListUl.innerHTML = ''; // Clear list
+
+                // Filter out duplicates for display purposes (optional, here we show all possibilities)
+                const uniquePrizes = segments.filter(s => s.type === 'win'); // Show only winnable prizes? Or all? Let's show winnable.
+                 // Or show all unique labels:
+                 // const uniqueLabels = {};
+                 // segments.forEach(s => { if (!uniqueLabels[s.label]) uniqueLabels[s.label] = s; });
+                 // const uniquePrizes = Object.values(uniqueLabels);
+
+                uniquePrizes.forEach(segment => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<span>${segment.emoji || '🎁'}</span> ${segment.label}`; // Default emoji if missing
+                    prizeListUl.appendChild(listItem);
+                });
+                 // Add a 'Try Again' possibility if desired
+                 const hasTryAgain = segments.some(s => s.type === 'lose');
+                 if (hasTryAgain) {
+                     const tryAgainItem = document.createElement('li');
+                     tryAgainItem.innerHTML = `<span>😔</span> Try Again`;
+                     prizeListUl.appendChild(tryAgainItem);
+                 }
+            }
+
+
+            function determineWinnerByProbability(segmentData) { /* ... (same as before) ... */
+                const randomPick = Math.random() * 100; let cumulativeProbability = 0;
+                for (const segment of segmentData) { cumulativeProbability += segment.probability; if (randomPick < cumulativeProbability) return segment; }
                 return segmentData[segmentData.length - 1]; // Fallback
             }
-
             function checkSpinLock() { /* ... (same as before) ... */
-                const lastSpinTime = localStorage.getItem(localStorageKey);
-                if (!lastSpinTime) return false;
-                const timeDiff = Date.now() - parseInt(lastSpinTime, 10);
-                return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
+                 const lastSpinTime = localStorage.getItem(localStorageKey); if (!lastSpinTime) return false; const timeDiff = Date.now() - parseInt(lastSpinTime, 10); return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
             }
             function setSpinLock() { /* ... (same as before) ... */
-                localStorage.setItem(localStorageKey, Date.now().toString());
+                 localStorage.setItem(localStorageKey, Date.now().toString());
             }
             function playSound(soundElement) { /* ... (same as before) ... */
-                 if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
+                  if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
             }
             function startClickSoundLoop() { /* ... (same as before) ... */
-                stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
+                 stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
             }
             function stopClickSoundLoop() { /* ... (same as before) ... */
-                clearTimeout(clickInterval);
+                 clearTimeout(clickInterval);
             }
-            function validateInputs() { /* ... (same as before) ... */
-                const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim();
-                if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; }
-                if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; }
-                return true;
+            function validateInputs() { /* ... (same as before, maybe add IG handle format check later) ... */
+                 const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim();
+                 if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; }
+                 if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; }
+                 // Optional: Basic check for instagram handle format
+                 // if (!/^[a-zA-Z0-9._]{1,30}$/.test(instagramValue.replace('@',''))) { alert("Please enter a valid Instagram handle."); return false; }
+                 return true;
             }
 
-            // --- Formspree Submission Function ---
-            function sendSpinResultToBackend(dataToSend) {
-                // --- Kullanıcının Formspree URL'si EKLENDİ ---
-                const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; // <-- SENİN URL'N BURADA
-
-                fetch(formspreeEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify(dataToSend)
-                })
-                .then(response => {
-                    if (response.ok) { console.log('Formspree submission successful.'); return response.json(); }
-                    else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); }
-                })
-                .then(data => { if(data) console.log('Formspree success response:', data); })
-                .catch(error => { console.error('Network error sending to Formspree:', error); });
+            // --- Formspree Submission Function (Uses your URL) ---
+            function sendSpinResultToBackend(dataToSend) { /* ... (same as before with your URL) ... */
+                 const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; // Your specific URL
+                 fetch(formspreeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(dataToSend) })
+                 .then(response => { if (response.ok) { console.log('Formspree submission successful.'); return response.json(); } else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); } })
+                 .then(data => { if(data) console.log('Formspree success response:', data); })
+                 .catch(error => { console.error('Network error sending to Formspree:', error); });
             }
-            // --- End of Formspree Function ---
 
 
-            function spinWheel() { /* ... (same logic as previous answer, calls determineWinnerByProbability) ... */
-                if (isSpinning) return; if (checkSpinLock()) { alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`); return; } if (!validateInputs()) return;
+            function spinWheel() {
+                if (isSpinning) return;
+                if (checkSpinLock()) { alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`); return; }
+                if (!validateInputs()) return;
+
                 isSpinning = true; spinButton.disabled = true; determinedWinnerSegment = null;
+
+                // 1. Determine actual winner
                 determinedWinnerSegment = determineWinnerByProbability(segments);
+                // 2. Find winner's index in the main segments array
                 const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
+                // 3. Map to a VISUAL segment on the 12-slice wheel
                 const visualTargetIndex = winningPrizeIndex % visualSegmentCount;
+                // 4. Calculate angle for the middle of that VISUAL segment
                 const targetAngle = (visualTargetIndex * visualSegmentAngle) + (visualSegmentAngle / 2);
+                // 5. Calculate total rotation
                 const randomExtraRotation = Math.floor(Math.random() * 360);
                 const totalRotation = (minSpins * 360) + targetAngle + randomExtraRotation;
+
                 if (!wheel) { console.error("Wheel element not found"); isSpinning = false; spinButton.disabled = false; return; }
+
+                // Apply animation
                 wheel.style.transition = `transform ${spinDurationSeconds}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
                 requestAnimationFrame(() => { requestAnimationFrame(() => { wheel.style.transform = `rotate(${totalRotation}deg)`; }); });
                 startClickSoundLoop();
                 wheel.removeEventListener('transitionend', handleSpinEnd); wheel.addEventListener('transitionend', handleSpinEnd, { once: true });
             }
 
-            function handleSpinEnd(event) { /* ... (same logic as previous answer, calls sendSpinResultToBackend) ... */
+            function handleSpinEnd(event) { /* ... (same as before, calls sendSpinResultToBackend) ... */
                 if (event.propertyName !== 'transform' || !isSpinning) return; isSpinning = false; stopClickSoundLoop();
                 if (determinedWinnerSegment) {
                     const submissionData = {
@@ -255,29 +420,33 @@
                         prizeWon: determinedWinnerSegment.label, prizeID: determinedWinnerSegment.id,
                         spinTimestamp: new Date().toISOString()
                     };
-                    sendSpinResultToBackend(submissionData); // <-- Formspree'ye GÖNDERİM BURADA
+                    sendSpinResultToBackend(submissionData);
                     showResult(determinedWinnerSegment);
-                } else {
-                    console.error("Spin ended but no winner was determined!");
-                    showResult(segments.find(s => s.type === 'lose') || segments[0]);
-                }
+                } else { console.error("Spin ended but no winner was determined!"); showResult(segments.find(s => s.type === 'lose') || segments[0]); }
                 setSpinLock();
             }
 
             function showResult(result) { /* ... (same as before) ... */
                  resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
-                 resultMessage.textContent = result.label;
+                 resultMessage.innerHTML = `<span>${result.emoji || ''}</span> ${result.label}`; // Add emoji here too
                  if (result.type === 'win') { playSound(winSound); triggerConfetti(); } else { playSound(loseSound); }
                  if(resultPopup) resultPopup.classList.add('show');
             }
             function triggerConfetti() { /* ... (same as before) ... */
-                 if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
+                  if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
             }
 
-            // Event Listeners & Initial Check ... (same as before) ...
+            // === Initial Setup ===
+            populatePrizeLabels(); // Add labels to wheel on load
+            populateExternalPrizeList(); // Add prizes to list on load
+
+            // Event Listeners
             if (spinButton) { spinButton.addEventListener('click', spinWheel); } else { console.error("Spin button element not found!"); }
             if (closePopupButton) { closePopupButton.addEventListener('click', () => { if(resultPopup) resultPopup.classList.remove('show'); }); } else { console.error("Popup close button not found!"); }
-            if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; } else { if(spinButton) spinButton.disabled = false; }
+
+            // Initial Lock Check
+            if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; }
+            else { if(spinButton) spinButton.disabled = false; }
 
         }); // DOMContentLoaded End
     </script>
