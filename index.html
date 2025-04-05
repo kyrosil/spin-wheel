@@ -1,27 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Win with Kyrosil</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-    }
-    #emailInput {
-      padding: 10px;
-      font-size: 16px;
-      width: 80%;
-      max-width: 300px;
-      margin-bottom: 15px;
+      background: #f7f7f7;
+      margin-top: 50px;
     }
     #wheel {
       width: 300px;
@@ -29,7 +17,7 @@
       border: 10px solid #fff;
       border-radius: 50%;
       box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      margin: 20px auto;
+      margin: 0 auto;
       position: relative;
       overflow: hidden;
       transition: transform 4s ease-out;
@@ -41,33 +29,30 @@
       top: 50%;
       left: 50%;
       transform-origin: 0% 0%;
-      background: #e91e63;
+      background: #2196f3;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 16px;
     }
     .wheel-segment:nth-child(even) {
       background: #9c27b0;
     }
     #spinBtn {
-      margin-top: 20px;
-      padding: 12px 24px;
+      margin-top: 30px;
+      padding: 10px 20px;
       font-size: 18px;
       background: #2196f3;
       color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.2s ease;
     }
-    #spinBtn:hover {
-      transform: scale(1.05);
-      background-color: #1976d2;
-    }
-    #spinBtn:active {
-      transform: scale(0.95);
+    #result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
     }
     .pointer {
       width: 0;
@@ -77,131 +62,96 @@
       border-bottom: 20px solid #333;
       margin: 20px auto;
     }
-    #logo {
-      width: 100px;
-      height: 100px;
-      background: white;
-      border-radius: 50%;
-      padding: 10px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      z-index: 10;
-    }
-    #resultModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 22px;
-      display: none;
-      flex-direction: column;
-    }
-    #closeBtn {
+    #emailInput {
       margin-top: 20px;
-      padding: 10px 20px;
-      background: #ff4081;
-      border: none;
-      border-radius: 8px;
+      padding: 10px;
       font-size: 16px;
-      cursor: pointer;
+    }
+    #instagramInput {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
   <h1>Win with Kyrosil</h1>
-  <input type="email" id="emailInput" placeholder="Enter your email to spin" required />
-  <div class="pointer"></div>
   <div id="wheel">
-    <img id="logo" src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Logo" />
+    <div class="wheel-segment" style="transform: rotate(0deg);">10% Off</div>
+    <div class="wheel-segment" style="transform: rotate(60deg);">Free Shipping</div>
+    <div class="wheel-segment" style="transform: rotate(120deg);">Nothing 😢</div>
+    <div class="wheel-segment" style="transform: rotate(180deg);">5% Off</div>
+    <div class="wheel-segment" style="transform: rotate(240deg);">Mystery Prize</div>
+    <div class="wheel-segment" style="transform: rotate(300deg);">15% Off</div>
   </div>
+  <div class="pointer"></div>
+  <input type="text" id="instagramInput" placeholder="Instagram Kullanıcı Adınızı Girin" />
+  <input type="email" id="emailInput" placeholder="Email adresinizi girin" />
   <button id="spinBtn">Spin</button>
-
-  <div id="resultModal">
-    <div id="resultText"></div>
-    <button id="closeBtn">Close</button>
-  </div>
+  <div id="result"></div>
 
   <script>
-    const wheel = document.getElementById("wheel");
-    const spinBtn = document.getElementById("spinBtn");
-    const emailInput = document.getElementById("emailInput");
-    const resultModal = document.getElementById("resultModal");
-    const resultText = document.getElementById("resultText");
-    const closeBtn = document.getElementById("closeBtn");
+    const wheel = document.getElementById('wheel');
+    const result = document.getElementById('result');
+    const btn = document.getElementById('spinBtn');
+    const instagramInput = document.getElementById('instagramInput');
+    const emailInput = document.getElementById('emailInput');
 
-    const segments = [
-      "10% Off",
-      "Free Shipping",
-      "Nothing 😢",
-      "5% Off",
-      "Mystery Prize",
-      "15% Off"
-    ];
+    const segments = ["10% Off", "Free Shipping", "Nothing 😢", "5% Off", "Mystery Prize", "15% Off"];
+    const winningSound = new Audio('https://example.com/winning-sound.mp3'); // Kazanma sesi
+    const losingSound = new Audio('https://example.com/losing-sound.mp3'); // Kaybetme sesi
+    const confettiSound = new Audio('https://example.com/confetti-sound.mp3'); // Konfeti sesi
 
-    const segmentCount = segments.length;
-    const segmentAngle = 360 / segmentCount;
+    let lastSpinTime = localStorage.getItem('lastSpinTime');
 
-    // Generate segments visually
-    for (let i = 0; i < segmentCount; i++) {
-      const segment = document.createElement("div");
-      segment.className = "wheel-segment";
-      segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(-60deg)`;
-      segment.innerText = segments[i];
-      wheel.appendChild(segment);
+    if (lastSpinTime && (new Date() - new Date(lastSpinTime) < 24 * 60 * 60 * 1000)) {
+      alert('Çarkı sadece 24 saatte bir kez döndürebilirsiniz!');
+      btn.disabled = true; // 24 saatlik limit
     }
 
-    if (localStorage.getItem("hasSpun")) {
-      spinBtn.disabled = true;
-      spinBtn.innerText = "You already spun!";
-    }
-
-    spinBtn.addEventListener("click", () => {
-      const email = emailInput.value.trim();
-      if (!email || !email.includes("@")) {
-        alert("Please enter a valid email address.");
+    btn.addEventListener('click', () => {
+      if (!instagramInput.value || !emailInput.value) {
+        alert('Instagram kullanıcı adınızı ve email adresinizi girin!');
         return;
       }
 
-      if (localStorage.getItem("hasSpun")) {
-        alert("You've already used your spin!");
-        return;
-      }
-
-      const spinAngle = Math.floor(Math.random() * 360) + 1440;
+      const spinAngle = Math.floor(Math.random() * 360) + 1440; // Minimum 4 dönüş
       wheel.style.transform = `rotate(${spinAngle}deg)`;
-
       const normalizedAngle = spinAngle % 360;
-      const selectedIndex = Math.floor((360 - normalizedAngle + (segmentAngle / 2)) % 360 / segmentAngle);
-
-      const prize = segments[selectedIndex];
-      const prizeCode = `KYRO-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
-
-      localStorage.setItem("hasSpun", true);
-      localStorage.setItem("prize", prize);
-      localStorage.setItem("code", prizeCode);
+      const selectedIndex = Math.floor((360 - normalizedAngle + 30) % 360 / 60);
 
       setTimeout(() => {
-        resultText.innerHTML = `You won: <strong>${prize}</strong><br>Code: <strong>${prizeCode}</strong>`;
-        resultModal.style.display = "flex";
-        spinBtn.disabled = true;
-        spinBtn.innerText = "You already spun!";
-      }, 4000);
-    });
+        result.textContent = "You won: " + segments[selectedIndex];
 
-    closeBtn.addEventListener("click", () => {
-      resultModal.style.display = "none";
+        // Ses efektleri
+        if (segments[selectedIndex] === "Nothing 😢") {
+          losingSound.play();
+        } else {
+          winningSound.play();
+          confettiSound.play(); // Konfeti
+        }
+
+        // Kazanan bilgileri mail ile gönderme
+        fetch('https://your-mail-api.com/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: 'spinwheel@kyrosil.eu',
+            subject: 'Kazanan Ödül!',
+            text: `Kazanan: ${instagramInput.value}\nEmail: ${emailInput.value}\nÖdül: ${segments[selectedIndex]}`,
+          }),
+        });
+
+        // LocalStorage güncellemesi
+        localStorage.setItem('lastSpinTime', new Date().toISOString());
+
+      }, 4000); // 4 saniye bekle, dönüş tamamlanmadan önce
     });
   </script>
 </body>
 </html>
+
 
 
