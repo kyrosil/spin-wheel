@@ -11,6 +11,7 @@
       background: #f7f7f7;
       margin-top: 50px;
     }
+
     #wheel {
       width: 300px;
       height: 300px;
@@ -21,7 +22,16 @@
       position: relative;
       overflow: hidden;
       transition: transform 4s ease-out;
+      background: conic-gradient(
+        #2196f3 0deg 60deg, 
+        #9c27b0 60deg 120deg, 
+        #2196f3 120deg 180deg, 
+        #9c27b0 180deg 240deg, 
+        #2196f3 240deg 300deg, 
+        #9c27b0 300deg 360deg
+      );
     }
+
     .wheel-segment {
       position: absolute;
       width: 50%;
@@ -29,16 +39,26 @@
       top: 50%;
       left: 50%;
       transform-origin: 0% 0%;
-      background: #2196f3;
-      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
+      color: white;
     }
-    .wheel-segment:nth-child(even) {
-      background: #9c27b0;
+
+    #logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 80px;
+      height: 80px;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 50%;
+      padding: 10px;
+      z-index: 10;
     }
+
     #spinBtn {
       margin-top: 30px;
       padding: 10px 20px;
@@ -49,11 +69,13 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
     #result {
       margin-top: 20px;
       font-size: 20px;
       font-weight: bold;
     }
+
     .pointer {
       width: 0;
       height: 0;
@@ -62,11 +84,13 @@
       border-bottom: 20px solid #333;
       margin: 20px auto;
     }
+
     #emailInput {
       margin-top: 20px;
       padding: 10px;
       font-size: 16px;
     }
+
     #instagramInput {
       margin-top: 20px;
       padding: 10px;
@@ -77,14 +101,11 @@
 <body>
   <h1>Win with Kyrosil</h1>
   <div id="wheel">
-    <div class="wheel-segment" style="transform: rotate(0deg);">10% Off</div>
-    <div class="wheel-segment" style="transform: rotate(60deg);">Free Shipping</div>
-    <div class="wheel-segment" style="transform: rotate(120deg);">Nothing 😢</div>
-    <div class="wheel-segment" style="transform: rotate(180deg);">5% Off</div>
-    <div class="wheel-segment" style="transform: rotate(240deg);">Mystery Prize</div>
-    <div class="wheel-segment" style="transform: rotate(300deg);">15% Off</div>
+    <div id="logo">
+      <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
+    </div>
   </div>
-  <div class="pointer"></div>
+
   <input type="text" id="instagramInput" placeholder="Instagram Kullanıcı Adınızı Girin" />
   <input type="email" id="emailInput" placeholder="Email adresinizi girin" />
   <button id="spinBtn">Spin</button>
@@ -152,6 +173,7 @@
   </script>
 </body>
 </html>
+
 
 
 
