@@ -7,45 +7,16 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* === CSS === */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 100vh; background-color: #f4f4f4; margin: 0; overflow-x: hidden; padding: 20px 10px; box-sizing: border-box;
-        }
-        .container {
-            text-align: center; background-color: #fff; padding: 25px 35px; border-radius: 18px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); max-width: 100%; width: 480px; box-sizing: border-box; margin-bottom: 20px;
-        }
+        /* === CSS === (Unchanged from previous Canvas version) */
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background-color: #f4f4f4; margin: 0; overflow-x: hidden; padding: 20px 10px; box-sizing: border-box; }
+        .container { text-align: center; background-color: #fff; padding: 25px 35px; border-radius: 18px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); max-width: 100%; width: 480px; box-sizing: border-box; margin-bottom: 20px; }
         h1 { color: #2c3e50; font-size: 2em; margin-bottom: 25px; font-weight: 600; }
-
-        /* --- Wheel --- */
         .wheel-container { margin-bottom: 30px; }
-        .wheel-wrapper {
-            position: relative;
-            width: 320px; /* Canvas boyutu ile eşleşmeli */
-            height: 320px; /* Canvas boyutu ile eşleşmeli */
-            margin: 25px auto;
-        }
-        /* Canvas element styling */
-        #prizeWheelCanvas {
-            display: block; /* İnline boşlukları kaldırmak için */
-            max-width: 100%;
-            height: auto;
-        }
-        .pointer { /* Pointer hala üstte */
-            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid #e74c3c;
-            z-index: 10; filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.25));
-        }
-        .wheel-logo { /* Logo hala üstte */
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90px; height: 90px; background-color: #fff; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 12px rgba(0,0,0,0.15); z-index: 7; padding: 5px; box-sizing: border-box;
-        }
+        .wheel-wrapper { position: relative; width: 320px; height: 320px; margin: 25px auto; }
+        #prizeWheelCanvas { display: block; max-width: 100%; height: auto; }
+        .pointer { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid #e74c3c; z-index: 10; filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.25)); }
+        .wheel-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; background-color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 12px rgba(0,0,0,0.15); z-index: 7; padding: 5px; box-sizing: border-box; }
         .wheel-logo img { max-width: 85%; max-height: 85%; object-fit: contain; border-radius: 50%; }
-
-        /* Inputs & Button - unchanged */
         .input-section { margin-top: 30px; }
         .input-section p { margin-bottom: 18px; color: #555; font-size: 0.95em; }
         .input-section input { display: block; width: calc(100% - 24px); padding: 12px; margin: 0 auto 12px auto; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
@@ -53,8 +24,6 @@
         .spin-button:hover { background-color: #27ae60; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
         .spin-button:active { transform: translateY(1px); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); }
         .spin-button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; box-shadow: none; animation: none; }
-
-        /* Prize List & Rules (Outside container) - unchanged */
         .info-section { margin-top: 20px; padding: 20px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); max-width: 100%; width: 480px; box-sizing: border-box; text-align: left; }
         .info-section h4 { margin-top: 0; margin-bottom: 10px; color: #2c3e50; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px; }
         .prize-list ul, .rules ul { list-style: none; padding: 0; margin: 0; }
@@ -62,8 +31,6 @@
         .prize-list li span { margin-right: 8px; font-size: 1.1em; display: inline-block; width: 20px; text-align: center; }
         .rules li::before { content: "•"; color: #3498db; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; margin-right: 0.5em; }
         .rules { margin-top: 20px; }
-
-        /* Result Popup - unchanged */
         .result-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.65); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
         .result-popup.show { opacity: 1; visibility: visible; }
         .popup-content { background-color: white; padding: 35px 45px; border-radius: 12px; text-align: center; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2); max-width: 90%; width: 380px; }
@@ -71,11 +38,10 @@
         .popup-content p { font-size: 1.1em; color: #555; margin-bottom: 25px;}
         #close-popup { padding: 11px 22px; background-color: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; transition: background-color 0.2s ease; }
         #close-popup:hover { background-color: #c0392b; }
-
-        /* Mobile */
         @media (max-width: 520px) {
              .container, .info-section { width: 95%; padding: 20px 20px; }
-             .wheel-wrapper { width: 280px; height: 280px; } /* Match canvas size below if changed */
+             .wheel-wrapper { width: 280px; height: 280px; }
+             #prizeWheelCanvas { width: 280px; height: 280px; } /* Match wrapper */
              .pointer { border-left-width: 14px; border-right-width: 14px; border-top-width: 24px; top: -18px;}
              .wheel-logo { width: 75px; height: 75px; }
              h1 { font-size: 1.7em; }
@@ -93,12 +59,11 @@
             <div class="wheel-wrapper" id="wheel-wrapper">
                 <div class="pointer">▼</div>
                 <canvas id="prizeWheelCanvas" width="320" height="320"></canvas>
-                 <div class="wheel-logo">
+                <div class="wheel-logo">
                     <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
                 </div>
             </div>
         </div>
-
         <div class="input-section" id="input-section">
             <p>Enter your details and spin to win!</p>
             <input type="email" id="email" placeholder="Your Email Address" required>
@@ -136,8 +101,8 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
             const canvas = document.getElementById('prizeWheelCanvas');
+            // --- Other DOM elements --- (same as before)
             const spinButton = document.getElementById('spin-button');
             const emailInput = document.getElementById('email');
             const instagramInput = document.getElementById('instagram');
@@ -150,281 +115,148 @@
             const loseSound = document.getElementById('lose-sound');
             const prizeListUl = document.getElementById('prize-list-ul');
 
-            // Basic check if canvas is supported
-            if (!canvas || !canvas.getContext) {
-                alert("Your browser doesn't support Canvas, the wheel cannot be displayed.");
-                if(spinButton) spinButton.disabled = true;
-                return;
-            }
+            if (!canvas || !canvas.getContext) { alert("Canvas not supported!"); if(spinButton) spinButton.disabled = true; return; }
             const ctx = canvas.getContext('2d');
-            const canvasSize = canvas.width; // Assuming square canvas
+            const canvasSize = canvas.width;
             const centerX = canvasSize / 2;
             const centerY = canvasSize / 2;
-            const radius = canvasSize / 2 - 10; // Radius with padding
+            const radius = canvasSize / 2 - 10;
 
             // Settings
-            const visualSegmentCount = 12; // How many slices to draw visually
-            const visualSegmentAngle = (2 * Math.PI) / visualSegmentCount; // Angle in radians
+            const visualSegmentCount = 12;
+            const visualSegmentAngle = (2 * Math.PI) / visualSegmentCount;
             const spinDurationSeconds = 10;
-            const minSpins = 5; // Minimum full rotations
-            const localStorageKey = 'kyrosilWheelLastSpin_v4_canvas';
+            const minSpins = 5;
+            const localStorageKey = 'kyrosilWheelLastSpin_v5_new_prob'; // Update key again
             const lockDurationHours = 24;
-            const colors = ['#3498db', '#ffffff']; // Alternating colors for visual segments
-            const textColor = '#333'; // Text color on slices
-            const textFont = 'bold 11px Arial, sans-serif'; // Font for slice text
+            const colors = ['#3498db', '#ffffff'];
+            const textColor = '#333';
+            const textFont = 'bold 11px Arial, sans-serif';
 
-            // === Prizes and Probabilities ===
+            // === UPDATED Prizes and Probabilities (New Probabilities & Order) ===
             const segments = [
-                { id: 'TRY_AGAIN_1', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
-                { id: 'TRY_AGAIN_2', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
-                { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
-                { id: 'STARBUCKS', label: "$5 / ₺200 Starbucks", emoji: "☕", type: "win", probability: 5 },
-                { id: 'CARREFOUR', label: "€10 / ₺350 Carrefour", emoji: "🛒", type: "win", probability: 5 },
-                { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 5 },
-                { id: 'HOODIE', label: "Kyrosil Hoodie", emoji: "🧥", type: "win", probability: 5 },
-                { id: 'GREEK', label: "₺1500 Yunandan Gelsin", emoji: "🇬🇷", type: "win", probability: 4 },
-                { id: 'IGA', label: "1 Day IGA PASS", emoji: "✈️", type: "win", probability: 0.8 },
-                { id: 'TURKISH_AIR', label: "$100 THY Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
+                // { id: 'unique_code', label: "Prize Name", emoji: "❓", type: "win/lose", probability: chance% },
+                { id: 'STARBUCKS',   label: "$5 / ₺200 Starbucks",        emoji: "☕", type: "win",  probability: 2 },   // Prize 1 (2%)
+                { id: 'TRY_AGAIN_1', label: "Try Again",                  emoji: "😔", type: "lose", probability: 30 },  // Try Again 1 (30%)
+                { id: 'CARREFOUR',   label: "€10 / ₺350 Carrefour",      emoji: "🛒", type: "win",  probability: 2 },   // Prize 2 (2%)
+                { id: 'TRY_AGAIN_2', label: "Try Again",                  emoji: "😔", type: "lose", probability: 30 },  // Try Again 2 (30%)
+                { id: 'MAVI',        label: "₺400 Mavi Point",            emoji: "👖", type: "win",  probability: 2 },   // Prize 3 (2%)
+                { id: 'TRY_AGAIN_3', label: "Try Again",                  emoji: "😔", type: "lose", probability: 30 },  // Try Again 3 (30%)
+                { id: 'HOODIE',      label: "Kyrosil Hoodie",             emoji: "🧥", type: "win",  probability: 2 },   // Prize 4 (2%)
+                { id: 'GREEK',       label: "₺1500 Yunandan Gelsin",      emoji: "🇬🇷", type: "win",  probability: 1 },   // Prize 5 (1%)
+                { id: 'IGA',         label: "1 Day IGA PASS",             emoji: "✈️", type: "win",  probability: 0.8 }, // Prize 6 (0.8%)
+                { id: 'TURKISH_AIR', label: "$100 THY Gift Card",         emoji: "✈️", type: "win",  probability: 0.2 }  // Prize 7 (0.2%)
+                // Total: 2+30+2+30+2+30+2+1+0.8+0.2 = 100%
             ];
-             const numberOfPrizes = segments.length; // Should be 10
-             const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
-             if (Math.abs(totalProb - 100) > 0.01) { console.error(`Probabilities sum to ${totalProb}, not 100!`); alert("Config Error!"); if(spinButton) spinButton.disabled = true;}
+            const numberOfPrizes = segments.length;
+            const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
+            if (Math.abs(totalProb - 100) > 0.01) { console.error(`Probabilities sum to ${totalProb}, not 100!`); alert("Config Error!"); if(spinButton) spinButton.disabled = true;}
 
-            // Animation variables
+            // --- Animation, Drawing, Logic Functions --- (Remain the same as previous Canvas version)
             let isSpinning = false;
-            let currentRotation = 0; // Current angle in radians
-            let targetRotation = 0; // Target angle in radians
+            let currentRotation = 0; // Radians
+            let targetRotation = 0;  // Radians
             let spinStartTime = null;
             let animationFrameId = null;
             let clickInterval;
             let determinedWinnerSegment = null;
 
-            // === Canvas Drawing Functions ===
-
-            function drawSegment(index, color) {
-                const startAngle = index * visualSegmentAngle;
-                const endAngle = startAngle + visualSegmentAngle;
-
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
-                ctx.closePath();
-                ctx.fillStyle = color;
-                ctx.fill();
-                // Optional: Add a stroke line between segments
-                ctx.strokeStyle = '#ccc'; // Light grey border
-                ctx.lineWidth = 1;
-                ctx.stroke();
+            function drawSegment(index, color) { /* ... (same canvas drawing code) ... */
+                const startAngle = index * visualSegmentAngle; const endAngle = startAngle + visualSegmentAngle;
+                ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.arc(centerX, centerY, radius, startAngle, endAngle, false); ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+                ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.stroke();
             }
-
-            function drawSegmentText(index) {
-                // Map the visual segment index (0-11) to a prize index (0-9)
-                // This will cause prizes to repeat visually on the last few slices
-                const prizeIndex = index % numberOfPrizes;
-                const segmentData = segments[prizeIndex];
-                if (!segmentData) return; // Safety check
-
-                const angle = index * visualSegmentAngle + visualSegmentAngle / 2; // Middle angle of the segment
-
-                ctx.save(); // Save context state
-                ctx.translate(centerX, centerY); // Move origin to center
-                ctx.rotate(angle); // Rotate context to align with segment middle
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = textColor;
-                ctx.font = textFont;
-
-                // Calculate text position (e.g., 60% out from the center)
-                const textRadius = radius * 0.65;
-
-                // Draw emoji and text - simple horizontal text, rotated
-                const text = `${segmentData.emoji || ''} ${segmentData.label}`;
-                // Optional: Add code here to wrap text if too long
-                ctx.fillText(text, textRadius, 0);
-
-                ctx.restore(); // Restore context state
+            function drawSegmentText(index) { /* ... (same canvas drawing code, uses new segments order) ... */
+                const prizeIndex = index % numberOfPrizes; const segmentData = segments[prizeIndex]; if (!segmentData) return;
+                const angle = index * visualSegmentAngle + visualSegmentAngle / 2;
+                ctx.save(); ctx.translate(centerX, centerY); ctx.rotate(angle); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = textColor; ctx.font = textFont;
+                const textRadius = radius * 0.65; const text = `${segmentData.emoji || ''} ${segmentData.label}`; ctx.fillText(text, textRadius, 0); ctx.restore();
             }
-
-            function drawWheel() {
-                ctx.clearRect(0, 0, canvasSize, canvasSize); // Clear canvas
-                 // Draw outer border/circle if desired
-                 ctx.beginPath();
-                 ctx.arc(centerX, centerY, radius + 2, 0, 2 * Math.PI, false); // Slightly larger circle
-                 ctx.strokeStyle = '#ecf0f1'; // Match background border
-                 ctx.lineWidth = 5; // Match background border width
-                 ctx.stroke();
-
-                // Draw all visual segments and their text
-                for (let i = 0; i < visualSegmentCount; i++) {
-                    drawSegment(i, colors[i % colors.length]); // Draw colored segment
-                    drawSegmentText(i); // Draw text mapped to this segment
-                }
-                 // Note: Logo is an HTML element placed over the canvas via CSS
+            function drawWheel() { /* ... (same canvas drawing code) ... */
+                ctx.clearRect(0, 0, canvasSize, canvasSize); ctx.beginPath(); ctx.arc(centerX, centerY, radius + 2, 0, 2 * Math.PI, false); ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 5; ctx.stroke();
+                for (let i = 0; i < visualSegmentCount; i++) { drawSegment(i, colors[i % colors.length]); drawSegmentText(i); }
             }
-
-            // === Animation Function ===
             function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-
-            function spinAnimationLoop(timestamp) {
-                if (!spinStartTime) { spinStartTime = timestamp; }
-                const elapsed = timestamp - spinStartTime;
-                const duration = spinDurationSeconds * 1000;
-
-                // Calculate progress (0 to 1) with easing
-                let progress = Math.min(elapsed / duration, 1);
-                let easedProgress = easeOutCubic(progress);
-
-                // Calculate current rotation angle based on eased progress
-                const rotationDifference = targetRotation - currentRotation;
-                const angleNow = currentRotation + rotationDifference * easedProgress;
-
-                // Redraw the wheel at the new angle
-                ctx.clearRect(0, 0, canvasSize, canvasSize);
-                ctx.save();
-                ctx.translate(centerX, centerY); // Move origin to center for rotation
-                ctx.rotate(angleNow); // Rotate the entire context
-                ctx.translate(-centerX, -centerY); // Move origin back
-                drawWheel(); // Draw the static wheel content (will appear rotated)
-                ctx.restore();
-
-                // Continue animation or stop
-                if (progress < 1) {
-                    animationFrameId = requestAnimationFrame(spinAnimationLoop);
-                } else {
-                    // Animation finished
-                    currentRotation = targetRotation % (2 * Math.PI); // Normalize final angle
-                    handleSpinEnd(); // Call the end handler
-                }
+            function spinAnimationLoop(timestamp) { /* ... (same animation loop code) ... */
+                if (!spinStartTime) { spinStartTime = timestamp; } const elapsed = timestamp - spinStartTime; const duration = spinDurationSeconds * 1000;
+                let progress = Math.min(elapsed / duration, 1); let easedProgress = easeOutCubic(progress);
+                const rotationDifference = targetRotation - currentRotation; const angleNow = currentRotation + rotationDifference * easedProgress;
+                ctx.clearRect(0, 0, canvasSize, canvasSize); ctx.save(); ctx.translate(centerX, centerY); ctx.rotate(angleNow); ctx.translate(-centerX, -centerY); drawWheel(); ctx.restore();
+                if (progress < 1) { animationFrameId = requestAnimationFrame(spinAnimationLoop); }
+                else { currentRotation = targetRotation % (2 * Math.PI); handleSpinEnd(); } // Update currentRotation here too
             }
+            function determineWinnerByProbability(segmentData) { /* ... (same weighted random logic) ... */
+                 const randomPick = Math.random() * 100; let cumulativeProbability = 0; for (const segment of segmentData) { cumulativeProbability += segment.probability; if (randomPick < cumulativeProbability) return segment; } return segmentData[segmentData.length - 1];
+            }
+            function checkSpinLock() { /* ... (same lock check) ... */
+                 const lastSpinTime = localStorage.getItem(localStorageKey); if (!lastSpinTime) return false; const timeDiff = Date.now() - parseInt(lastSpinTime, 10); return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
+            }
+            function setSpinLock() { /* ... (same lock set) ... */
+                 localStorage.setItem(localStorageKey, Date.now().toString());
+            }
+            function playSound(soundElement) { /* ... (same sound play) ... */
+                  if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
+            }
+            function startClickSoundLoop() { /* ... (same click loop start) ... */
+                 stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
+            }
+            function stopClickSoundLoop() { /* ... (same click loop stop) ... */
+                 clearTimeout(clickInterval);
+            }
+            function validateInputs() { /* ... (same input validation) ... */
+                 const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim(); if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; } if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; } return true;
+            }
+            function sendSpinResultToBackend(dataToSend) { /* ... (same Formspree function) ... */
+                 const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; fetch(formspreeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(dataToSend) }) .then(response => { if (response.ok) { console.log('Formspree submission successful.'); return response.json(); } else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); } }) .then(data => { if(data) console.log('Formspree success response:', data); }) .catch(error => { console.error('Network error sending to Formspree:', error); });
+            }
+            function spinWheel() { /* ... (same spin logic, uses new segments) ... */
+                if (isSpinning) return; if (checkSpinLock()) { alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`); return; } if (!validateInputs()) return;
+                isSpinning = true; spinButton.disabled = true; determinedWinnerSegment = null; spinStartTime = null;
+                determinedWinnerSegment = determineWinnerByProbability(segments); const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
+                const visualTargetIndex = winningPrizeIndex % visualSegmentCount; const targetSegmentMiddleAngle = visualTargetIndex * visualSegmentAngle + visualSegmentAngle / 2;
+                const randomExtraRotation = Math.random() * 2 * Math.PI;
+                // Calculate how much rotation needed from current position to new target position
+                // Normalize angles to be positive within 0 to 2*PI
+                const normalizedCurrentRotation = (currentRotation % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI);
+                const desiredStopAngle = (2 * Math.PI - targetSegmentMiddleAngle + (Math.PI / 2)) % (2* Math.PI) ; // Adjusting stop angle reference if needed - let's try aligning segment middle to top (0 or 2*PI)
+                const angleToStopAt = (2 * Math.PI - targetSegmentMiddleAngle ) % (2* Math.PI); // Target angle position relative to 0 (top)
 
 
-            // === Core Logic Functions === (Mostly similar, but interact with canvas/animation)
-
-             function determineWinnerByProbability(segmentData) { /* ... (same) ... */
-                 const randomPick = Math.random() * 100; let cumulativeProbability = 0;
-                 for (const segment of segmentData) { cumulativeProbability += segment.probability; if (randomPick < cumulativeProbability) return segment; }
-                 return segmentData[segmentData.length - 1];
-             }
-             function checkSpinLock() { /* ... (same) ... */
-                  const lastSpinTime = localStorage.getItem(localStorageKey); if (!lastSpinTime) return false; const timeDiff = Date.now() - parseInt(lastSpinTime, 10); return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
-             }
-             function setSpinLock() { /* ... (same) ... */
-                  localStorage.setItem(localStorageKey, Date.now().toString());
-             }
-             function playSound(soundElement) { /* ... (same) ... */
-                   if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
-             }
-             function startClickSoundLoop() { /* ... (same) ... */
-                  stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
-             }
-             function stopClickSoundLoop() { /* ... (same) ... */
-                  clearTimeout(clickInterval);
-             }
-             function validateInputs() { /* ... (same) ... */
-                  const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim(); if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; } if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; } return true;
-             }
-             function sendSpinResultToBackend(dataToSend) { /* ... (same - uses your Formspree URL) ... */
-                  const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; fetch(formspreeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(dataToSend) }) .then(response => { if (response.ok) { console.log('Formspree submission successful.'); return response.json(); } else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); } }) .then(data => { if(data) console.log('Formspree success response:', data); }) .catch(error => { console.error('Network error sending to Formspree:', error); });
-             }
-
-
-            function spinWheel() {
-                if (isSpinning) return;
-                if (checkSpinLock()) { alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`); return; }
-                if (!validateInputs()) return;
-
-                isSpinning = true;
-                spinButton.disabled = true;
-                determinedWinnerSegment = null;
-                spinStartTime = null; // Reset animation timer
-
-                // 1. Determine winner
-                determinedWinnerSegment = determineWinnerByProbability(segments);
-                const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
-
-                // 2. Calculate target VISUAL stopping position
-                // Map prize index to one of the 12 visual segments
-                const visualTargetIndex = winningPrizeIndex % visualSegmentCount;
-                // Calculate the angle where the pointer should point (middle of the target segment)
-                // Pointer is at the top (like 0 or 2*PI radians pointing straight up)
-                // So the segment's middle angle should align with the top.
-                const targetSegmentMiddleAngle = visualTargetIndex * visualSegmentAngle + visualSegmentAngle / 2;
-                 // We want the final angle of the wheel rotation to be such that targetSegmentMiddleAngle lands at the top (0).
-                 // Angle needs to be negative to align correctly, or adjusted by PI/2 depending on 0 reference.
-                 // Let's simplify: Angle in coordinate system (0 is right, PI/2 is down). Pointer is up (-PI/2).
-                 // Target angle = -(Target Segment Middle) + Pointer Position (-PI/2)
-                 // Let's use simpler 0 = top approach. We want segment middle angle to align with 0.
-                 // So the wheel needs to rotate by -(targetSegmentMiddleAngle)
-                 // Add full spins and randomness, convert to radians
-                const randomExtraRotation = Math.random() * 2 * Math.PI; // Radians
-                targetRotation = currentRotation // Start from current rotation
-                                 + (minSpins * 2 * Math.PI) // Add full spins
-                                 + (2 * Math.PI - targetSegmentMiddleAngle) // Align segment middle to top
-                                 + randomExtraRotation; // Add randomness
-
-
-                 // Ensure positive rotation distance if needed, although targetRotation handles absolute angle
-                 if (targetRotation <= currentRotation) {
-                     // Ensure it spins forward at least minSpins
-                     targetRotation += Math.ceil((currentRotation - targetRotation) / (2 * Math.PI) + minSpins) * (2 * Math.PI);
+                let rotationNeeded = angleToStopAt - normalizedCurrentRotation;
+                 if (rotationNeeded < 0) { // Ensure it spins forward
+                     rotationNeeded += (2 * Math.PI);
                  }
 
+                 targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI) + randomExtraRotation;
 
-                // Cancel any previous animation frame
-                cancelAnimationFrame(animationFrameId);
 
-                startClickSoundLoop();
-
-                // Start the animation loop
-                animationFrameId = requestAnimationFrame(spinAnimationLoop);
+                cancelAnimationFrame(animationFrameId); startClickSoundLoop(); animationFrameId = requestAnimationFrame(spinAnimationLoop);
             }
+             function handleSpinEnd() { /* ... (same end handling logic) ... */
+                 isSpinning = false; stopClickSoundLoop(); cancelAnimationFrame(animationFrameId);
+                 // currentRotation = targetRotation % (2 * Math.PI); // Update current rotation after spin stops
 
-            // Called when animation finishes
-            function handleSpinEnd() {
-                isSpinning = false;
-                stopClickSoundLoop();
-                cancelAnimationFrame(animationFrameId); // Ensure loop is stopped
+                 if (determinedWinnerSegment) {
+                     const submissionData = { email: emailInput.value.trim(), instagram: instagramInput.value.trim(), prizeWon: determinedWinnerSegment.label, prizeID: determinedWinnerSegment.id, spinTimestamp: new Date().toISOString() };
+                     sendSpinResultToBackend(submissionData); showResult(determinedWinnerSegment);
+                 } else { console.error("Spin ended but no winner determined!"); showResult(segments.find(s => s.type === 'lose') || segments[0]); }
+                 setSpinLock();
+             }
+             function showResult(result) { /* ... (same result display) ... */
+                 resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!'; resultMessage.innerHTML = `<span>${result.emoji || ''}</span> ${result.label}`;
+                 if (result.type === 'win') { playSound(winSound); triggerConfetti(); } else { playSound(loseSound); } if(resultPopup) resultPopup.classList.add('show');
+             }
+             function triggerConfetti() { /* ... (same confetti) ... */
+                   if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
+             }
+             function populateExternalPrizeList() { /* ... (same list population) ... */
+                  if (!prizeListUl) return; prizeListUl.innerHTML = ''; const uniquePrizesToShow = segments.filter(s => s.type === 'win');
+                  uniquePrizesToShow.forEach(segment => { const li = document.createElement('li'); li.innerHTML = `<span>${segment.emoji || '🎁'}</span> ${segment.label}`; prizeListUl.appendChild(li); });
+                  if (segments.some(s => s.type === 'lose')) { const li = document.createElement('li'); li.innerHTML = `<span>😔</span> Try Again`; prizeListUl.appendChild(li); }
+             }
 
-                if (determinedWinnerSegment) {
-                    const submissionData = {
-                        email: emailInput.value.trim(), instagram: instagramInput.value.trim(),
-                        prizeWon: determinedWinnerSegment.label, prizeID: determinedWinnerSegment.id,
-                        spinTimestamp: new Date().toISOString()
-                    };
-                    sendSpinResultToBackend(submissionData);
-                    showResult(determinedWinnerSegment);
-                } else {
-                    console.error("Spin ended but no winner determined!");
-                    showResult(segments.find(s => s.type === 'lose') || segments[0]);
-                }
-                setSpinLock();
-                 // Update currentRotation for potential future use (though visually it stops)
-                 // currentRotation = targetRotation % (2* Math.PI); // Normalize
-            }
-
-            function showResult(result) { /* ... (same) ... */
-                resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
-                resultMessage.innerHTML = `<span>${result.emoji || ''}</span> ${result.label}`;
-                if (result.type === 'win') { playSound(winSound); triggerConfetti(); } else { playSound(loseSound); }
-                if(resultPopup) resultPopup.classList.add('show');
-            }
-            function triggerConfetti() { /* ... (same) ... */
-                 if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
-            }
-
-            function populateExternalPrizeList() { /* ... (same) ... */
-                 if (!prizeListUl) return; prizeListUl.innerHTML = '';
-                 const uniquePrizesToShow = segments.filter(s => s.type === 'win'); // Show only winnable prizes
-                 uniquePrizesToShow.forEach(segment => { const li = document.createElement('li'); li.innerHTML = `<span>${segment.emoji || '🎁'}</span> ${segment.label}`; prizeListUl.appendChild(li); });
-                 if (segments.some(s => s.type === 'lose')) { const li = document.createElement('li'); li.innerHTML = `<span>😔</span> Try Again`; prizeListUl.appendChild(li); }
-            }
-
-
-            // === Initial Setup ===
-            drawWheel(); // Draw the initial state of the wheel
-            populateExternalPrizeList();
-
-            // Event Listeners & Initial Lock Check ... (same) ...
+            // Initial Setup & Event Listeners ... (same) ...
+            drawWheel(); populateExternalPrizeList();
             if (spinButton) { spinButton.addEventListener('click', spinWheel); } else { console.error("Spin button element not found!"); }
             if (closePopupButton) { closePopupButton.addEventListener('click', () => { if(resultPopup) resultPopup.classList.remove('show'); }); } else { console.error("Popup close button not found!"); }
             if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; } else { if(spinButton) spinButton.disabled = false; }
