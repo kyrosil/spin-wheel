@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Win with Kyrosil</title> <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <title>Win with Kyrosil</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* === CSS (Styles remain the same) === */
+        /* === CSS === */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             display: flex; justify-content: center; align-items: center;
@@ -34,14 +35,10 @@
             width: 100%; height: 100%; border-radius: 50%; position: relative;
             overflow: hidden; border: 5px solid #ecf0f1;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15) inset, 0 5px 15px rgba(0, 0, 0, 0.1);
-            /* 12 alternating visual segments */
             background-image: conic-gradient(
-                #3498db 0deg 30deg, #ffffff 30deg 60deg,
-                #3498db 60deg 90deg, #ffffff 90deg 120deg,
-                #3498db 120deg 150deg, #ffffff 150deg 180deg,
-                #3498db 180deg 210deg, #ffffff 210deg 240deg,
-                #3498db 240deg 270deg, #ffffff 270deg 300deg,
-                #3498db 300deg 330deg, #ffffff 330deg 360deg
+                #3498db 0deg 30deg, #ffffff 30deg 60deg, #3498db 60deg 90deg, #ffffff 90deg 120deg,
+                #3498db 120deg 150deg, #ffffff 150deg 180deg, #3498db 180deg 210deg, #ffffff 210deg 240deg,
+                #3498db 240deg 270deg, #ffffff 270deg 300deg, #3498db 300deg 330deg, #ffffff 330deg 360deg
             );
             transition: transform 10s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
@@ -55,9 +52,7 @@
             max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 50%;
         }
         .input-section { margin-top: 30px; }
-        .input-section p {
-            margin-bottom: 18px; color: #555; font-size: 0.95em;
-        }
+        .input-section p { margin-bottom: 18px; color: #555; font-size: 0.95em; }
         .input-section input {
             display: block; width: calc(100% - 24px); padding: 12px;
             margin: 0 auto 12px auto; border: 1px solid #ccc;
@@ -69,18 +64,9 @@
             cursor: pointer; transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
             margin-top: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .spin-button:hover {
-            background-color: #27ae60; transform: translateY(-2px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-        }
-        .spin-button:active {
-            transform: translateY(1px); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-        }
-        .spin-button:disabled {
-            background-color: #bdc3c7; cursor: not-allowed; transform: none;
-            box-shadow: none; animation: none;
-        }
-        /* Result Popup */
+        .spin-button:hover { background-color: #27ae60; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
+        .spin-button:active { transform: translateY(1px); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); }
+        .spin-button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; box-shadow: none; animation: none; }
         .result-popup {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.65); display: flex;
@@ -119,7 +105,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>Win with Kyrosil</h1> <div class="wheel-wrapper">
+        <h1>Win with Kyrosil</h1>
+
+        <div class="wheel-wrapper">
             <div class="pointer">▼</div>
             <div class="wheel" id="wheel">
                 <div class="wheel-logo">
@@ -129,7 +117,7 @@
         </div>
 
         <div class="input-section" id="input-section">
-             <p>Enter your details and spin to win!</p>
+            <p>Enter your details and spin to win!</p>
             <input type="email" id="email" placeholder="Your Email Address" required>
             <input type="text" id="instagram" placeholder="Your Instagram Handle" required>
             <button class="spin-button" id="spin-button">Spin the Wheel!</button>
@@ -137,9 +125,9 @@
 
         <div class="result-popup" id="result-popup">
             <div class="popup-content">
-                 <h2 id="result-title">Congratulations!</h2>
+                <h2 id="result-title">Congratulations!</h2>
                 <p id="result-message">You won a great prize!</p>
-                 <button id="close-popup">Close</button>
+                <button id="close-popup">Close</button>
             </div>
         </div>
 
@@ -163,207 +151,133 @@
             const winSound = document.getElementById('win-sound');
             const loseSound = document.getElementById('lose-sound');
 
-            // === Settings ===
-            const visualSegmentCount = 12; // Number of visible blue/white slices
+            // Settings
+            const visualSegmentCount = 12;
             const visualSegmentAngle = 360 / visualSegmentCount;
             const spinDurationSeconds = 10;
             const minSpins = 5;
-            const localStorageKey = 'kyrosilWheelLastSpin_v2_en'; // Unique key for this version
+            const localStorageKey = 'kyrosilWheelLastSpin_v2_en';
             const lockDurationHours = 24;
 
-            // === Prizes and Probabilities ===
-            // DEFINE YOUR PRIZES AND CHANCES HERE
-            // Ensure probabilities add up to 100!
+            // Prizes and Probabilities (MAKE SURE these sum to 100!)
             const segments = [
-                // { id: 'unique_code', label: "Prize Name", type: "win/lose", probability: chance_percentage },
-                { id: 'TRY_AGAIN', label: "Better Luck Next Time!", type: "lose", probability: 40 }, // 40% chance
-                { id: '5_OFF', label: "A 5% Discount Code!", type: "win", probability: 25 },       // 25% chance
-                { id: '10_OFF', label: "A 10% Discount Code!", type: "win", probability: 15 },      // 15% chance
-                { id: 'FREE_SHIP', label: "Free Shipping on Your Next Order!", type: "win", probability: 10 }, // 10% chance
-                { id: 'GIFT', label: "A Special Surprise Gift!", type: "win", probability: 7 },     // 7% chance
-                { id: '20_OFF', label: "WOW! A 20% Discount Code!", type: "win", probability: 3 }      // 3% chance
+                { id: 'TRY_AGAIN', label: "Better Luck Next Time!", type: "lose", probability: 40 },
+                { id: '5_OFF', label: "A 5% Discount Code!", type: "win", probability: 25 },
+                { id: '10_OFF', label: "A 10% Discount Code!", type: "win", probability: 15 },
+                { id: 'FREE_SHIP', label: "Free Shipping on Your Next Order!", type: "win", probability: 10 },
+                { id: 'GIFT', label: "A Special Surprise Gift!", type: "win", probability: 7 },
+                { id: '20_OFF', label: "WOW! A 20% Discount Code!", type: "win", probability: 3 }
             ];
-             // Verify probabilities sum to 100
-            const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
-            if (totalProb !== 100) {
-                console.error(`Probabilities sum to ${totalProb}, not 100! Please fix the segments array.`);
-                // Optional: Disable button if probabilities are wrong
-                // if(spinButton) spinButton.disabled = true;
-            }
-
+             const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
+             if (totalProb !== 100) { console.error(`Probabilities sum to ${totalProb}, not 100!`); }
 
             let isSpinning = false;
             let clickInterval;
-            let determinedWinnerSegment = null; // Holds the actual winning segment object
+            let determinedWinnerSegment = null;
 
             // === Functions ===
-
-            // Function to determine the winner based on probability
             function determineWinnerByProbability(segmentData) {
-                const randomPick = Math.random() * 100; // Pick a number between 0 and 99.99...
+                const randomPick = Math.random() * 100;
                 let cumulativeProbability = 0;
-
                 for (const segment of segmentData) {
                     cumulativeProbability += segment.probability;
-                    if (randomPick < cumulativeProbability) {
-                        return segment; // Return the winning segment object
-                    }
+                    if (randomPick < cumulativeProbability) return segment;
                 }
-                // Fallback (shouldn't be reached if probabilities sum to 100)
-                console.warn("Weighted random selection fallback triggered.");
-                return segmentData[segmentData.length - 1];
+                return segmentData[segmentData.length - 1]; // Fallback
             }
 
-            function checkSpinLock() {
+            function checkSpinLock() { /* ... (same as before) ... */
                 const lastSpinTime = localStorage.getItem(localStorageKey);
                 if (!lastSpinTime) return false;
                 const timeDiff = Date.now() - parseInt(lastSpinTime, 10);
                 return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
             }
-
-            function setSpinLock() {
+            function setSpinLock() { /* ... (same as before) ... */
                 localStorage.setItem(localStorageKey, Date.now().toString());
             }
-
-            function playSound(soundElement) {
-                if (soundElement?.play) { // Optional chaining check
-                    soundElement.currentTime = 0;
-                    soundElement.play().catch(e => console.warn("Sound play failed:", e));
-                }
+            function playSound(soundElement) { /* ... (same as before) ... */
+                 if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
             }
-
-            function startClickSoundLoop() {
-                stopClickSoundLoop();
-                const playLoop = () => {
-                    if (!isSpinning) return;
-                    playSound(clickSound);
-                    clickInterval = setTimeout(playLoop, 120 + Math.random() * 80);
-                };
-                playLoop();
+            function startClickSoundLoop() { /* ... (same as before) ... */
+                stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
             }
-
-            function stopClickSoundLoop() {
+            function stopClickSoundLoop() { /* ... (same as before) ... */
                 clearTimeout(clickInterval);
             }
-
-            function validateInputs() {
-                const emailValue = emailInput.value.trim();
-                const instagramValue = instagramInput.value.trim();
-                if (!emailValue || !instagramValue) {
-                    // English Alert
-                    alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!");
-                    return false;
-                }
-                if (!/\S+@\S+\.\S+/.test(emailValue)) {
-                     // English Alert
-                    alert("Please enter a valid email address.");
-                    return false;
-                }
+            function validateInputs() { /* ... (same as before) ... */
+                const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim();
+                if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; }
+                if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; }
                 return true;
             }
 
-            function spinWheel() {
-                if (isSpinning) return;
+            // --- Formspree Submission Function ---
+            function sendSpinResultToBackend(dataToSend) {
+                // --- Kullanıcının Formspree URL'si EKLENDİ ---
+                const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; // <-- SENİN URL'N BURADA
 
-                if (checkSpinLock()) {
-                     // English Alert
-                    alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`);
-                    return;
-                }
+                fetch(formspreeEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(dataToSend)
+                })
+                .then(response => {
+                    if (response.ok) { console.log('Formspree submission successful.'); return response.json(); }
+                    else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); }
+                })
+                .then(data => { if(data) console.log('Formspree success response:', data); })
+                .catch(error => { console.error('Network error sending to Formspree:', error); });
+            }
+            // --- End of Formspree Function ---
 
-                if (!validateInputs()) return;
 
-                isSpinning = true;
-                spinButton.disabled = true;
-                determinedWinnerSegment = null; // Clear previous winner
-
-                // 1. Determine the actual winner based on probability
+            function spinWheel() { /* ... (same logic as previous answer, calls determineWinnerByProbability) ... */
+                if (isSpinning) return; if (checkSpinLock()) { alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`); return; } if (!validateInputs()) return;
+                isSpinning = true; spinButton.disabled = true; determinedWinnerSegment = null;
                 determinedWinnerSegment = determineWinnerByProbability(segments);
-
-                // 2. Find the index of the winning prize in the segments array
                 const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
-
-                // 3. Determine a VISUAL stopping segment on the 12-slice wheel
-                //    We can map the prize index to a visual slot. Simple modulo ensures it maps to one of the 12.
                 const visualTargetIndex = winningPrizeIndex % visualSegmentCount;
-
-                // 4. Calculate the angle to stop at the middle of that visual segment
                 const targetAngle = (visualTargetIndex * visualSegmentAngle) + (visualSegmentAngle / 2);
-
-                // 5. Calculate total rotation for animation (randomness + target)
                 const randomExtraRotation = Math.floor(Math.random() * 360);
                 const totalRotation = (minSpins * 360) + targetAngle + randomExtraRotation;
-
-
-                if (!wheel) {
-                    console.error("Wheel element not found, cannot start spin.");
-                    isSpinning = false; spinButton.disabled = false; return;
-                }
-
-                // Apply transition and rotation
+                if (!wheel) { console.error("Wheel element not found"); isSpinning = false; spinButton.disabled = false; return; }
                 wheel.style.transition = `transform ${spinDurationSeconds}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-                 requestAnimationFrame(() => { requestAnimationFrame(() => {
-                     wheel.style.transform = `rotate(${totalRotation}deg)`; });
-                 });
-
+                requestAnimationFrame(() => { requestAnimationFrame(() => { wheel.style.transform = `rotate(${totalRotation}deg)`; }); });
                 startClickSoundLoop();
-
-                // Listen for transition end
-                wheel.removeEventListener('transitionend', handleSpinEnd);
-                wheel.addEventListener('transitionend', handleSpinEnd, { once: true });
+                wheel.removeEventListener('transitionend', handleSpinEnd); wheel.addEventListener('transitionend', handleSpinEnd, { once: true });
             }
 
-            function handleSpinEnd(event) {
-                if (event.propertyName !== 'transform' || !isSpinning) return;
-
-                isSpinning = false;
-                stopClickSoundLoop();
-
-                // Show result based on the winner determined BEFORE the spin
+            function handleSpinEnd(event) { /* ... (same logic as previous answer, calls sendSpinResultToBackend) ... */
+                if (event.propertyName !== 'transform' || !isSpinning) return; isSpinning = false; stopClickSoundLoop();
                 if (determinedWinnerSegment) {
+                    const submissionData = {
+                        email: emailInput.value.trim(), instagram: instagramInput.value.trim(),
+                        prizeWon: determinedWinnerSegment.label, prizeID: determinedWinnerSegment.id,
+                        spinTimestamp: new Date().toISOString()
+                    };
+                    sendSpinResultToBackend(submissionData); // <-- Formspree'ye GÖNDERİM BURADA
                     showResult(determinedWinnerSegment);
                 } else {
                     console.error("Spin ended but no winner was determined!");
-                    // Show a default 'lose' message
                     showResult(segments.find(s => s.type === 'lose') || segments[0]);
                 }
                 setSpinLock();
             }
 
-            function showResult(result) {
-                 // English Titles
-                resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
-                // Prize label (already English from segments array)
-                resultMessage.textContent = result.label;
-
-                if (result.type === 'win') {
-                    playSound(winSound);
-                    triggerConfetti();
-                } else {
-                    playSound(loseSound);
-                }
-
+            function showResult(result) { /* ... (same as before) ... */
+                 resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
+                 resultMessage.textContent = result.label;
+                 if (result.type === 'win') { playSound(winSound); triggerConfetti(); } else { playSound(loseSound); }
                  if(resultPopup) resultPopup.classList.add('show');
             }
-
-            function triggerConfetti() {
-                if (typeof confetti === 'function') {
-                    confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } });
-                } else {
-                    console.warn("Confetti function not found.");
-                }
+            function triggerConfetti() { /* ... (same as before) ... */
+                 if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
             }
 
-            // === Event Listeners ===
-            if (spinButton) { spinButton.addEventListener('click', spinWheel); }
-            else { console.error("Spin button element not found!"); }
-
-            if (closePopupButton) { closePopupButton.addEventListener('click', () => { if(resultPopup) resultPopup.classList.remove('show'); }); }
-            else { console.error("Popup close button not found!"); }
-
-            // Initial Lock Check on Page Load
-            if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; }
-            else { if(spinButton) spinButton.disabled = false; }
+            // Event Listeners & Initial Check ... (same as before) ...
+            if (spinButton) { spinButton.addEventListener('click', spinWheel); } else { console.error("Spin button element not found!"); }
+            if (closePopupButton) { closePopupButton.addEventListener('click', () => { if(resultPopup) resultPopup.classList.remove('show'); }); } else { console.error("Popup close button not found!"); }
+            if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; } else { if(spinButton) spinButton.disabled = false; }
 
         }); // DOMContentLoaded End
     </script>
