@@ -2,63 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spin the Wheel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Win with Kyrosil</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f7f7f7;
+      text-align: center;
+      background: #f4f4f4;
       margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      padding: 20px;
     }
-
-    #wheel-container {
-      position: relative;
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    #emailInput {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      max-width: 300px;
+      margin-bottom: 15px;
+    }
+    #wheel {
       width: 300px;
       height: 300px;
-    }
-
-    #logo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 80px;
-      height: 80px;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-    }
-
-    #wheel {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
       border: 10px solid #fff;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      margin: 20px auto;
+      position: relative;
+      overflow: hidden;
       transition: transform 4s ease-out;
     }
-
+    .wheel-segment {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      top: 50%;
+      left: 50%;
+      transform-origin: 0% 0%;
+      background: #e91e63;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .wheel-segment:nth-child(even) {
+      background: #9c27b0;
+    }
     #spinBtn {
-      margin-top: 30px;
-      padding: 10px 20px;
+      margin-top: 20px;
+      padding: 12px 24px;
       font-size: 18px;
       background: #2196f3;
       color: #fff;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
+      transition: transform 0.2s ease;
     }
-
-    #result {
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
+    #spinBtn:hover {
+      transform: scale(1.05);
+      background-color: #1976d2;
     }
-
+    #spinBtn:active {
+      transform: scale(0.95);
+    }
     .pointer {
       width: 0;
       height: 0;
@@ -67,67 +77,131 @@
       border-bottom: 20px solid #333;
       margin: 20px auto;
     }
+    #logo {
+      width: 100px;
+      height: 100px;
+      background: white;
+      border-radius: 50%;
+      padding: 10px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
+    #resultModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      display: none;
+      flex-direction: column;
+    }
+    #closeBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #ff4081;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-
-  <h2>Spin the Wheel!</h2>
+  <h1>Win with Kyrosil</h1>
+  <input type="email" id="emailInput" placeholder="Enter your email to spin" required />
   <div class="pointer"></div>
-  <div id="wheel-container">
+  <div id="wheel">
     <img id="logo" src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Logo" />
-    <canvas id="wheel"></canvas>
+  </div>
+  <button id="spinBtn">Spin</button>
+
+  <div id="resultModal">
+    <div id="resultText"></div>
+    <button id="closeBtn">Close</button>
   </div>
 
-  <button id="spinBtn">Spin</button>
-  <div id="result"></div>
-
   <script>
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
-    const segments = ["10% Off", "Free Shipping", "Nothing 😢", "5% Off", "Mystery Prize", "15% Off"];
-    const colors = ["#e91e63", "#9c27b0", "#e91e63", "#9c27b0", "#e91e63", "#9c27b0"];
-    let angle = 0;
+    const wheel = document.getElementById("wheel");
+    const spinBtn = document.getElementById("spinBtn");
+    const emailInput = document.getElementById("emailInput");
+    const resultModal = document.getElementById("resultModal");
+    const resultText = document.getElementById("resultText");
+    const closeBtn = document.getElementById("closeBtn");
 
-    canvas.width = 300;
-    canvas.height = 300;
+    const segments = [
+      "10% Off",
+      "Free Shipping",
+      "Nothing 😢",
+      "5% Off",
+      "Mystery Prize",
+      "15% Off"
+    ];
 
-    function drawWheel() {
-      const centerX = canvas.width / 2;
-      const centerY = canvas.height / 2;
-      const radius = 140;
-      const segmentAngle = 2 * Math.PI / segments.length;
+    const segmentCount = segments.length;
+    const segmentAngle = 360 / segmentCount;
 
-      for (let i = 0; i < segments.length; i++) {
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.fillStyle = colors[i];
-        ctx.arc(centerX, centerY, radius, i * segmentAngle, (i + 1) * segmentAngle);
-        ctx.fill();
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(i * segmentAngle + segmentAngle / 2);
-        ctx.textAlign = "right";
-        ctx.fillStyle = "white";
-        ctx.font = "14px Arial";
-        ctx.fillText(segments[i], radius - 10, 5);
-        ctx.restore();
-      }
+    // Generate segments visually
+    for (let i = 0; i < segmentCount; i++) {
+      const segment = document.createElement("div");
+      segment.className = "wheel-segment";
+      segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(-60deg)`;
+      segment.innerText = segments[i];
+      wheel.appendChild(segment);
     }
 
-    drawWheel();
+    if (localStorage.getItem("hasSpun")) {
+      spinBtn.disabled = true;
+      spinBtn.innerText = "You already spun!";
+    }
 
-    document.getElementById("spinBtn").addEventListener("click", () => {
+    spinBtn.addEventListener("click", () => {
+      const email = emailInput.value.trim();
+      if (!email || !email.includes("@")) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      if (localStorage.getItem("hasSpun")) {
+        alert("You've already used your spin!");
+        return;
+      }
+
       const spinAngle = Math.floor(Math.random() * 360) + 1440;
-      angle += spinAngle;
-      canvas.style.transform = `rotate(${angle}deg)`;
+      wheel.style.transform = `rotate(${spinAngle}deg)`;
+
+      const normalizedAngle = spinAngle % 360;
+      const selectedIndex = Math.floor((360 - normalizedAngle + (segmentAngle / 2)) % 360 / segmentAngle);
+
+      const prize = segments[selectedIndex];
+      const prizeCode = `KYRO-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+
+      localStorage.setItem("hasSpun", true);
+      localStorage.setItem("prize", prize);
+      localStorage.setItem("code", prizeCode);
+
       setTimeout(() => {
-        const normalized = angle % 360;
-        const picked = Math.floor((360 - normalized + 30) % 360 / 60);
-        document.getElementById("result").textContent = "You won: " + segments[picked];
+        resultText.innerHTML = `You won: <strong>${prize}</strong><br>Code: <strong>${prizeCode}</strong>`;
+        resultModal.style.display = "flex";
+        spinBtn.disabled = true;
+        spinBtn.innerText = "You already spun!";
       }, 4000);
     });
-  </script>
 
+    closeBtn.addEventListener("click", () => {
+      resultModal.style.display = "none";
+    });
+  </script>
 </body>
 </html>
+
 
