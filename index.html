@@ -10,157 +10,61 @@
         /* === CSS === */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            display: flex; flex-direction: column; /* Dikey hizalama için */
-            justify-content: center; align-items: center;
-            min-height: 100vh; background-color: #f4f4f4;
-            margin: 0; overflow-x: hidden; padding: 20px 10px; /* Üst/alt boşluk */
-            box-sizing: border-box;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; background-color: #f4f4f4; margin: 0; overflow-x: hidden; padding: 20px 10px; box-sizing: border-box;
         }
         .container {
-            text-align: center; background-color: #fff; padding: 25px 35px;
-            border-radius: 18px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            max-width: 100%; width: 480px; /* Biraz daha geniş */
-            box-sizing: border-box; margin-bottom: 20px; /* Altına boşluk */
+            text-align: center; background-color: #fff; padding: 25px 35px; border-radius: 18px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); max-width: 100%; width: 480px; box-sizing: border-box; margin-bottom: 20px;
         }
-        h1 {
-            color: #2c3e50; font-size: 2em; /* Biraz daha büyük */
-            margin-bottom: 25px; font-weight: 600;
-        }
+        h1 { color: #2c3e50; font-size: 2em; margin-bottom: 25px; font-weight: 600; }
 
         /* --- Wheel --- */
-        .wheel-container { /* Wrapper for alignment */
-             margin-bottom: 30px;
-        }
+        .wheel-container { margin-bottom: 30px; }
         .wheel-wrapper {
             position: relative;
-            width: 320px; /* Biraz daha büyük çark alanı */
-            height: 320px;
+            width: 320px; /* Canvas boyutu ile eşleşmeli */
+            height: 320px; /* Canvas boyutu ile eşleşmeli */
             margin: 25px auto;
-            padding: 0; list-style: none; /* For label container */
         }
-        .pointer {
+        /* Canvas element styling */
+        #prizeWheelCanvas {
+            display: block; /* İnline boşlukları kaldırmak için */
+            max-width: 100%;
+            height: auto;
+        }
+        .pointer { /* Pointer hala üstte */
             position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 16px solid transparent;
-            border-right: 16px solid transparent; border-top: 28px solid #e74c3c;
+            width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid #e74c3c;
             z-index: 10; filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.25));
         }
-        /* Prize Labels Container */
-        .wheel-labels {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border-radius: 50%; pointer-events: none; /* Tıklamayı engelle */
-            /* background: rgba(255, 0, 0, 0.1); */ /* Debugging için */
-            z-index: 6; /* Logonun altında, çarkın üstünde */
-        }
-        /* Individual Prize Label */
-        .prize-label {
-            display: block;
-            position: absolute;
-            top: 50%; left: 50%; /* Merkezden başla */
-            width: 50%; /* Yarıçap kadar uzasın */
-            height: 40px; /* Yüksekliği ayarla */
-            line-height: 40px; /* Dikey ortala */
-            transform-origin: 0% 50%; /* Soldan/ortadan dönsün */
-            text-align: center;
-            font-size: 10px; /* Boyutu ayarla, küçük olabilir */
-            font-weight: 600;
-            color: #333;
-            /* background: rgba(0, 255, 0, 0.2); */ /* Debugging için */
-            padding-right: 15px; /* Yazıyı içeri it */
-            box-sizing: border-box;
-            overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-        }
-         .prize-label span { /* Emoji için */
-             display: inline-block; margin-right: 4px;
-         }
-
-        .wheel { /* The visual spinning part */
-            width: 100%; height: 100%; border-radius: 50%; position: relative;
-            overflow: hidden; border: 5px solid #ecf0f1;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15) inset, 0 5px 15px rgba(0, 0, 0, 0.1);
-            background-image: conic-gradient( /* 12 alternating slices */
-                #3498db 0deg 30deg, #ffffff 30deg 60deg, #3498db 60deg 90deg, #ffffff 90deg 120deg,
-                #3498db 120deg 150deg, #ffffff 150deg 180deg, #3498db 180deg 210deg, #ffffff 210deg 240deg,
-                #3498db 240deg 270deg, #ffffff 270deg 300deg, #3498db 300deg 330deg, #ffffff 330deg 360deg
-            );
-            transition: transform 10s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-        .wheel-logo {
+        .wheel-logo { /* Logo hala üstte */
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90px; height: 90px; /* Logoyu biraz büyüt */ background-color: #ffffff; border-radius: 50%;
+            width: 90px; height: 90px; background-color: #fff; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 12px rgba(0,0,0,0.15); z-index: 7; /* En üstte */ padding: 5px; box-sizing: border-box;
+            box-shadow: 0 0 12px rgba(0,0,0,0.15); z-index: 7; padding: 5px; box-sizing: border-box;
         }
-        .wheel-logo img {
-            max-width: 85%; max-height: 85%; object-fit: contain; border-radius: 50%;
-        }
-        /* --- Inputs & Button --- */
+        .wheel-logo img { max-width: 85%; max-height: 85%; object-fit: contain; border-radius: 50%; }
+
+        /* Inputs & Button - unchanged */
         .input-section { margin-top: 30px; }
         .input-section p { margin-bottom: 18px; color: #555; font-size: 0.95em; }
-        .input-section input {
-            display: block; width: calc(100% - 24px); padding: 12px;
-            margin: 0 auto 12px auto; border: 1px solid #ccc;
-            border-radius: 6px; box-sizing: border-box; font-size: 1em;
-        }
-        .spin-button { /* Style unchanged */
-            padding: 14px 30px; font-size: 1.15em; font-weight: 600; background-color: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease; margin-top: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+        .input-section input { display: block; width: calc(100% - 24px); padding: 12px; margin: 0 auto 12px auto; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
+        .spin-button { padding: 14px 30px; font-size: 1.15em; font-weight: 600; background-color: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease; margin-top: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
         .spin-button:hover { background-color: #27ae60; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
         .spin-button:active { transform: translateY(1px); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); }
         .spin-button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; box-shadow: none; animation: none; }
 
-        /* --- Prize List & Rules (Outside container) --- */
-        .info-section {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #fff; /* White background */
-            border-radius: 12px; /* Rounded corners */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow */
-            max-width: 100%;
-            width: 480px; /* Match container width */
-            box-sizing: border-box;
-            text-align: left; /* Align text left */
-        }
-         .info-section h4 {
-             margin-top: 0;
-             margin-bottom: 10px;
-             color: #2c3e50;
-             border-bottom: 1px solid #ecf0f1; /* Separator line */
-             padding-bottom: 8px;
-         }
-         .prize-list ul, .rules ul {
-             list-style: none; /* Remove default bullets */
-             padding: 0;
-             margin: 0;
-         }
-         .prize-list li, .rules li {
-             margin-bottom: 8px;
-             color: #555;
-             font-size: 0.9em;
-             display: flex; /* Align emoji and text */
-             align-items: center;
-         }
-         .prize-list li span { /* Emoji styling */
-             margin-right: 8px;
-             font-size: 1.1em;
-             display: inline-block;
-             width: 20px; /* Fixed width for alignment */
-             text-align: center;
-         }
-         .rules li::before { /* Custom bullet for rules */
-             content: "•";
-             color: #3498db; /* Blue bullet */
-             font-weight: bold;
-             display: inline-block;
-             width: 1em;
-             margin-left: -1em; /* Adjust position */
-             margin-right: 0.5em;
-         }
+        /* Prize List & Rules (Outside container) - unchanged */
+        .info-section { margin-top: 20px; padding: 20px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); max-width: 100%; width: 480px; box-sizing: border-box; text-align: left; }
+        .info-section h4 { margin-top: 0; margin-bottom: 10px; color: #2c3e50; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px; }
+        .prize-list ul, .rules ul { list-style: none; padding: 0; margin: 0; }
+        .prize-list li, .rules li { margin-bottom: 8px; color: #555; font-size: 0.9em; display: flex; align-items: center; }
+        .prize-list li span { margin-right: 8px; font-size: 1.1em; display: inline-block; width: 20px; text-align: center; }
+        .rules li::before { content: "•"; color: #3498db; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; margin-right: 0.5em; }
         .rules { margin-top: 20px; }
 
-        /* Result Popup */
-        .result-popup { /* Style unchanged */
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.65); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
+        /* Result Popup - unchanged */
+        .result-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.65); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
         .result-popup.show { opacity: 1; visibility: visible; }
         .popup-content { background-color: white; padding: 35px 45px; border-radius: 12px; text-align: center; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2); max-width: 90%; width: 380px; }
         .popup-content h2 { margin-top: 0; color: #333; font-size: 1.6em; margin-bottom: 15px;}
@@ -169,18 +73,16 @@
         #close-popup:hover { background-color: #c0392b; }
 
         /* Mobile */
-        @media (max-width: 520px) { /* Adjust breakpoint */
+        @media (max-width: 520px) {
              .container, .info-section { width: 95%; padding: 20px 20px; }
-             .wheel-wrapper { width: 280px; height: 280px; } /* Adjust size */
+             .wheel-wrapper { width: 280px; height: 280px; } /* Match canvas size below if changed */
              .pointer { border-left-width: 14px; border-right-width: 14px; border-top-width: 24px; top: -18px;}
              .wheel-logo { width: 75px; height: 75px; }
-             .prize-label { font-size: 9px; height: 35px; line-height: 35px; padding-right: 10px;}
              h1 { font-size: 1.7em; }
              .input-section input { width: calc(100% - 22px); padding: 11px; }
              .spin-button { padding: 12px 25px; font-size: 1.05em; }
              .popup-content { padding: 25px 30px; width: 90%; }
-             .popup-content h2 {font-size: 1.4em;}
-             .popup-content p {font-size: 1em;}
+             .popup-content h2 {font-size: 1.4em;} .popup-content p {font-size: 1em;}
         }
     </style>
 </head>
@@ -190,12 +92,9 @@
         <div class="wheel-container">
             <div class="wheel-wrapper" id="wheel-wrapper">
                 <div class="pointer">▼</div>
-                 <div class="wheel-labels" id="wheel-labels">
-                    </div>
-                <div class="wheel" id="wheel">
-                    <div class="wheel-logo">
-                        <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
-                    </div>
+                <canvas id="prizeWheelCanvas" width="320" height="320"></canvas>
+                 <div class="wheel-logo">
+                    <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
                 </div>
             </div>
         </div>
@@ -203,17 +102,16 @@
         <div class="input-section" id="input-section">
             <p>Enter your details and spin to win!</p>
             <input type="email" id="email" placeholder="Your Email Address" required>
-            <input type="text" id="instagram" placeholder="Your Instagram Handle (@kyrosil)" required> <button class="spin-button" id="spin-button">Spin the Wheel!</button>
+            <input type="text" id="instagram" placeholder="Your Instagram Handle (@kyrosil)" required>
+            <button class="spin-button" id="spin-button">Spin the Wheel!</button>
         </div>
     </div>
 
     <div class="info-section">
         <div class="prize-list">
             <h4>Possible Prizes</h4>
-            <ul id="prize-list-ul">
-                </ul>
+            <ul id="prize-list-ul"></ul>
         </div>
-
         <div class="rules">
             <h4>Rules & Conditions</h4>
             <ul>
@@ -223,7 +121,6 @@
             </ul>
         </div>
     </div>
-
 
     <div class="result-popup" id="result-popup">
         <div class="popup-content">
@@ -240,8 +137,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // DOM Elements
-            const wheel = document.getElementById('wheel');
-            const wheelLabelsContainer = document.getElementById('wheel-labels'); // For prize labels on wheel
+            const canvas = document.getElementById('prizeWheelCanvas');
             const spinButton = document.getElementById('spin-button');
             const emailInput = document.getElementById('email');
             const instagramInput = document.getElementById('instagram');
@@ -252,20 +148,33 @@
             const clickSound = document.getElementById('click-sound');
             const winSound = document.getElementById('win-sound');
             const loseSound = document.getElementById('lose-sound');
-            const prizeListUl = document.getElementById('prize-list-ul'); // For external prize list
+            const prizeListUl = document.getElementById('prize-list-ul');
+
+            // Basic check if canvas is supported
+            if (!canvas || !canvas.getContext) {
+                alert("Your browser doesn't support Canvas, the wheel cannot be displayed.");
+                if(spinButton) spinButton.disabled = true;
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            const canvasSize = canvas.width; // Assuming square canvas
+            const centerX = canvasSize / 2;
+            const centerY = canvasSize / 2;
+            const radius = canvasSize / 2 - 10; // Radius with padding
 
             // Settings
-            const visualSegmentCount = 12; // Keep 12 visual background slices
-            const visualSegmentAngle = 360 / visualSegmentCount;
+            const visualSegmentCount = 12; // How many slices to draw visually
+            const visualSegmentAngle = (2 * Math.PI) / visualSegmentCount; // Angle in radians
             const spinDurationSeconds = 10;
-            const minSpins = 5;
-            const localStorageKey = 'kyrosilWheelLastSpin_v3_en_prizes'; // New key for new setup
+            const minSpins = 5; // Minimum full rotations
+            const localStorageKey = 'kyrosilWheelLastSpin_v4_canvas';
             const lockDurationHours = 24;
+            const colors = ['#3498db', '#ffffff']; // Alternating colors for visual segments
+            const textColor = '#333'; // Text color on slices
+            const textFont = 'bold 11px Arial, sans-serif'; // Font for slice text
 
-            // === NEW Prizes and Probabilities ===
-            // MAKE SURE probabilities sum to 100!
+            // === Prizes and Probabilities ===
             const segments = [
-                // { id: 'unique_code', label: "Prize Name", emoji: "❓", type: "win/lose", probability: chance% },
                 { id: 'TRY_AGAIN_1', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
                 { id: 'TRY_AGAIN_2', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
                 { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 25 },
@@ -273,115 +182,150 @@
                 { id: 'CARREFOUR', label: "€10 / ₺350 Carrefour", emoji: "🛒", type: "win", probability: 5 },
                 { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 5 },
                 { id: 'HOODIE', label: "Kyrosil Hoodie", emoji: "🧥", type: "win", probability: 5 },
-                { id: 'GREEK', label: "₺1500 Yunandan Gelsin", emoji: "🇬🇷", type: "win", probability: 4 }, // Moved up slightly
+                { id: 'GREEK', label: "₺1500 Yunandan Gelsin", emoji: "🇬🇷", type: "win", probability: 4 },
                 { id: 'IGA', label: "1 Day IGA PASS", emoji: "✈️", type: "win", probability: 0.8 },
-                { id: 'TURKISH_AIR', label: "$100 Turkish Airlines Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
-                 // Total: 25+25+25+5+5+5+5+4+0.8+0.2 = 100
+                { id: 'TURKISH_AIR', label: "$100 THY Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
             ];
-            const numberOfPrizes = segments.length; // Actual number of prize options
+             const numberOfPrizes = segments.length; // Should be 10
+             const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
+             if (Math.abs(totalProb - 100) > 0.01) { console.error(`Probabilities sum to ${totalProb}, not 100!`); alert("Config Error!"); if(spinButton) spinButton.disabled = true;}
 
-             // Verify probabilities sum to 100
-            const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
-             // Use a tolerance for floating point issues
-             if (Math.abs(totalProb - 100) > 0.01) {
-                console.error(`Probabilities sum to ${totalProb}, not 100! Please fix the segments array.`);
-                alert("Configuration error! Please contact the administrator."); // Show error to user
-                if(spinButton) spinButton.disabled = true; // Disable button
-             }
-
-
+            // Animation variables
             let isSpinning = false;
+            let currentRotation = 0; // Current angle in radians
+            let targetRotation = 0; // Target angle in radians
+            let spinStartTime = null;
+            let animationFrameId = null;
             let clickInterval;
             let determinedWinnerSegment = null;
 
-            // === Functions ===
+            // === Canvas Drawing Functions ===
 
-            // Function to populate prize labels around the wheel
-            function populatePrizeLabels() {
-                if (!wheelLabelsContainer) return;
-                wheelLabelsContainer.innerHTML = ''; // Clear existing labels
+            function drawSegment(index, color) {
+                const startAngle = index * visualSegmentAngle;
+                const endAngle = startAngle + visualSegmentAngle;
 
-                 // Angle adjustment to align labels better between slices if desired
-                const angleOffset = (360 / numberOfPrizes) / 2;
-
-                segments.forEach((segment, index) => {
-                    const labelElement = document.createElement('div');
-                    labelElement.classList.add('prize-label');
-
-                    // Calculate rotation for each label
-                    const angle = (index / numberOfPrizes) * 360 + angleOffset;
-                    labelElement.style.transform = `rotate(${angle}deg) translateY(-50%)`; // Rotate and center vertically
-
-                    // Add emoji and text
-                    labelElement.innerHTML = `<span>${segment.emoji || ''}</span> ${segment.label}`;
-                    wheelLabelsContainer.appendChild(labelElement);
-                });
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+                // Optional: Add a stroke line between segments
+                ctx.strokeStyle = '#ccc'; // Light grey border
+                ctx.lineWidth = 1;
+                ctx.stroke();
             }
 
-            // Function to populate the external prize list
-            function populateExternalPrizeList() {
-                if (!prizeListUl) return;
-                prizeListUl.innerHTML = ''; // Clear list
+            function drawSegmentText(index) {
+                // Map the visual segment index (0-11) to a prize index (0-9)
+                // This will cause prizes to repeat visually on the last few slices
+                const prizeIndex = index % numberOfPrizes;
+                const segmentData = segments[prizeIndex];
+                if (!segmentData) return; // Safety check
 
-                // Filter out duplicates for display purposes (optional, here we show all possibilities)
-                const uniquePrizes = segments.filter(s => s.type === 'win'); // Show only winnable prizes? Or all? Let's show winnable.
-                 // Or show all unique labels:
-                 // const uniqueLabels = {};
-                 // segments.forEach(s => { if (!uniqueLabels[s.label]) uniqueLabels[s.label] = s; });
-                 // const uniquePrizes = Object.values(uniqueLabels);
+                const angle = index * visualSegmentAngle + visualSegmentAngle / 2; // Middle angle of the segment
 
-                uniquePrizes.forEach(segment => {
-                    const listItem = document.createElement('li');
-                    listItem.innerHTML = `<span>${segment.emoji || '🎁'}</span> ${segment.label}`; // Default emoji if missing
-                    prizeListUl.appendChild(listItem);
-                });
-                 // Add a 'Try Again' possibility if desired
-                 const hasTryAgain = segments.some(s => s.type === 'lose');
-                 if (hasTryAgain) {
-                     const tryAgainItem = document.createElement('li');
-                     tryAgainItem.innerHTML = `<span>😔</span> Try Again`;
-                     prizeListUl.appendChild(tryAgainItem);
-                 }
-            }
+                ctx.save(); // Save context state
+                ctx.translate(centerX, centerY); // Move origin to center
+                ctx.rotate(angle); // Rotate context to align with segment middle
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = textColor;
+                ctx.font = textFont;
 
+                // Calculate text position (e.g., 60% out from the center)
+                const textRadius = radius * 0.65;
 
-            function determineWinnerByProbability(segmentData) { /* ... (same as before) ... */
-                const randomPick = Math.random() * 100; let cumulativeProbability = 0;
-                for (const segment of segmentData) { cumulativeProbability += segment.probability; if (randomPick < cumulativeProbability) return segment; }
-                return segmentData[segmentData.length - 1]; // Fallback
-            }
-            function checkSpinLock() { /* ... (same as before) ... */
-                 const lastSpinTime = localStorage.getItem(localStorageKey); if (!lastSpinTime) return false; const timeDiff = Date.now() - parseInt(lastSpinTime, 10); return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
-            }
-            function setSpinLock() { /* ... (same as before) ... */
-                 localStorage.setItem(localStorageKey, Date.now().toString());
-            }
-            function playSound(soundElement) { /* ... (same as before) ... */
-                  if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
-            }
-            function startClickSoundLoop() { /* ... (same as before) ... */
-                 stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
-            }
-            function stopClickSoundLoop() { /* ... (same as before) ... */
-                 clearTimeout(clickInterval);
-            }
-            function validateInputs() { /* ... (same as before, maybe add IG handle format check later) ... */
-                 const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim();
-                 if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; }
-                 if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; }
-                 // Optional: Basic check for instagram handle format
-                 // if (!/^[a-zA-Z0-9._]{1,30}$/.test(instagramValue.replace('@',''))) { alert("Please enter a valid Instagram handle."); return false; }
-                 return true;
+                // Draw emoji and text - simple horizontal text, rotated
+                const text = `${segmentData.emoji || ''} ${segmentData.label}`;
+                // Optional: Add code here to wrap text if too long
+                ctx.fillText(text, textRadius, 0);
+
+                ctx.restore(); // Restore context state
             }
 
-            // --- Formspree Submission Function (Uses your URL) ---
-            function sendSpinResultToBackend(dataToSend) { /* ... (same as before with your URL) ... */
-                 const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; // Your specific URL
-                 fetch(formspreeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(dataToSend) })
-                 .then(response => { if (response.ok) { console.log('Formspree submission successful.'); return response.json(); } else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); } })
-                 .then(data => { if(data) console.log('Formspree success response:', data); })
-                 .catch(error => { console.error('Network error sending to Formspree:', error); });
+            function drawWheel() {
+                ctx.clearRect(0, 0, canvasSize, canvasSize); // Clear canvas
+                 // Draw outer border/circle if desired
+                 ctx.beginPath();
+                 ctx.arc(centerX, centerY, radius + 2, 0, 2 * Math.PI, false); // Slightly larger circle
+                 ctx.strokeStyle = '#ecf0f1'; // Match background border
+                 ctx.lineWidth = 5; // Match background border width
+                 ctx.stroke();
+
+                // Draw all visual segments and their text
+                for (let i = 0; i < visualSegmentCount; i++) {
+                    drawSegment(i, colors[i % colors.length]); // Draw colored segment
+                    drawSegmentText(i); // Draw text mapped to this segment
+                }
+                 // Note: Logo is an HTML element placed over the canvas via CSS
             }
+
+            // === Animation Function ===
+            function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+            function spinAnimationLoop(timestamp) {
+                if (!spinStartTime) { spinStartTime = timestamp; }
+                const elapsed = timestamp - spinStartTime;
+                const duration = spinDurationSeconds * 1000;
+
+                // Calculate progress (0 to 1) with easing
+                let progress = Math.min(elapsed / duration, 1);
+                let easedProgress = easeOutCubic(progress);
+
+                // Calculate current rotation angle based on eased progress
+                const rotationDifference = targetRotation - currentRotation;
+                const angleNow = currentRotation + rotationDifference * easedProgress;
+
+                // Redraw the wheel at the new angle
+                ctx.clearRect(0, 0, canvasSize, canvasSize);
+                ctx.save();
+                ctx.translate(centerX, centerY); // Move origin to center for rotation
+                ctx.rotate(angleNow); // Rotate the entire context
+                ctx.translate(-centerX, -centerY); // Move origin back
+                drawWheel(); // Draw the static wheel content (will appear rotated)
+                ctx.restore();
+
+                // Continue animation or stop
+                if (progress < 1) {
+                    animationFrameId = requestAnimationFrame(spinAnimationLoop);
+                } else {
+                    // Animation finished
+                    currentRotation = targetRotation % (2 * Math.PI); // Normalize final angle
+                    handleSpinEnd(); // Call the end handler
+                }
+            }
+
+
+            // === Core Logic Functions === (Mostly similar, but interact with canvas/animation)
+
+             function determineWinnerByProbability(segmentData) { /* ... (same) ... */
+                 const randomPick = Math.random() * 100; let cumulativeProbability = 0;
+                 for (const segment of segmentData) { cumulativeProbability += segment.probability; if (randomPick < cumulativeProbability) return segment; }
+                 return segmentData[segmentData.length - 1];
+             }
+             function checkSpinLock() { /* ... (same) ... */
+                  const lastSpinTime = localStorage.getItem(localStorageKey); if (!lastSpinTime) return false; const timeDiff = Date.now() - parseInt(lastSpinTime, 10); return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
+             }
+             function setSpinLock() { /* ... (same) ... */
+                  localStorage.setItem(localStorageKey, Date.now().toString());
+             }
+             function playSound(soundElement) { /* ... (same) ... */
+                   if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
+             }
+             function startClickSoundLoop() { /* ... (same) ... */
+                  stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
+             }
+             function stopClickSoundLoop() { /* ... (same) ... */
+                  clearTimeout(clickInterval);
+             }
+             function validateInputs() { /* ... (same) ... */
+                  const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim(); if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; } if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; } return true;
+             }
+             function sendSpinResultToBackend(dataToSend) { /* ... (same - uses your Formspree URL) ... */
+                  const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; fetch(formspreeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(dataToSend) }) .then(response => { if (response.ok) { console.log('Formspree submission successful.'); return response.json(); } else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); } }) .then(data => { if(data) console.log('Formspree success response:', data); }) .catch(error => { console.error('Network error sending to Formspree:', error); });
+             }
 
 
             function spinWheel() {
@@ -389,31 +333,58 @@
                 if (checkSpinLock()) { alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`); return; }
                 if (!validateInputs()) return;
 
-                isSpinning = true; spinButton.disabled = true; determinedWinnerSegment = null;
+                isSpinning = true;
+                spinButton.disabled = true;
+                determinedWinnerSegment = null;
+                spinStartTime = null; // Reset animation timer
 
-                // 1. Determine actual winner
+                // 1. Determine winner
                 determinedWinnerSegment = determineWinnerByProbability(segments);
-                // 2. Find winner's index in the main segments array
                 const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
-                // 3. Map to a VISUAL segment on the 12-slice wheel
+
+                // 2. Calculate target VISUAL stopping position
+                // Map prize index to one of the 12 visual segments
                 const visualTargetIndex = winningPrizeIndex % visualSegmentCount;
-                // 4. Calculate angle for the middle of that VISUAL segment
-                const targetAngle = (visualTargetIndex * visualSegmentAngle) + (visualSegmentAngle / 2);
-                // 5. Calculate total rotation
-                const randomExtraRotation = Math.floor(Math.random() * 360);
-                const totalRotation = (minSpins * 360) + targetAngle + randomExtraRotation;
+                // Calculate the angle where the pointer should point (middle of the target segment)
+                // Pointer is at the top (like 0 or 2*PI radians pointing straight up)
+                // So the segment's middle angle should align with the top.
+                const targetSegmentMiddleAngle = visualTargetIndex * visualSegmentAngle + visualSegmentAngle / 2;
+                 // We want the final angle of the wheel rotation to be such that targetSegmentMiddleAngle lands at the top (0).
+                 // Angle needs to be negative to align correctly, or adjusted by PI/2 depending on 0 reference.
+                 // Let's simplify: Angle in coordinate system (0 is right, PI/2 is down). Pointer is up (-PI/2).
+                 // Target angle = -(Target Segment Middle) + Pointer Position (-PI/2)
+                 // Let's use simpler 0 = top approach. We want segment middle angle to align with 0.
+                 // So the wheel needs to rotate by -(targetSegmentMiddleAngle)
+                 // Add full spins and randomness, convert to radians
+                const randomExtraRotation = Math.random() * 2 * Math.PI; // Radians
+                targetRotation = currentRotation // Start from current rotation
+                                 + (minSpins * 2 * Math.PI) // Add full spins
+                                 + (2 * Math.PI - targetSegmentMiddleAngle) // Align segment middle to top
+                                 + randomExtraRotation; // Add randomness
 
-                if (!wheel) { console.error("Wheel element not found"); isSpinning = false; spinButton.disabled = false; return; }
 
-                // Apply animation
-                wheel.style.transition = `transform ${spinDurationSeconds}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-                requestAnimationFrame(() => { requestAnimationFrame(() => { wheel.style.transform = `rotate(${totalRotation}deg)`; }); });
+                 // Ensure positive rotation distance if needed, although targetRotation handles absolute angle
+                 if (targetRotation <= currentRotation) {
+                     // Ensure it spins forward at least minSpins
+                     targetRotation += Math.ceil((currentRotation - targetRotation) / (2 * Math.PI) + minSpins) * (2 * Math.PI);
+                 }
+
+
+                // Cancel any previous animation frame
+                cancelAnimationFrame(animationFrameId);
+
                 startClickSoundLoop();
-                wheel.removeEventListener('transitionend', handleSpinEnd); wheel.addEventListener('transitionend', handleSpinEnd, { once: true });
+
+                // Start the animation loop
+                animationFrameId = requestAnimationFrame(spinAnimationLoop);
             }
 
-            function handleSpinEnd(event) { /* ... (same as before, calls sendSpinResultToBackend) ... */
-                if (event.propertyName !== 'transform' || !isSpinning) return; isSpinning = false; stopClickSoundLoop();
+            // Called when animation finishes
+            function handleSpinEnd() {
+                isSpinning = false;
+                stopClickSoundLoop();
+                cancelAnimationFrame(animationFrameId); // Ensure loop is stopped
+
                 if (determinedWinnerSegment) {
                     const submissionData = {
                         email: emailInput.value.trim(), instagram: instagramInput.value.trim(),
@@ -422,31 +393,41 @@
                     };
                     sendSpinResultToBackend(submissionData);
                     showResult(determinedWinnerSegment);
-                } else { console.error("Spin ended but no winner was determined!"); showResult(segments.find(s => s.type === 'lose') || segments[0]); }
+                } else {
+                    console.error("Spin ended but no winner determined!");
+                    showResult(segments.find(s => s.type === 'lose') || segments[0]);
+                }
                 setSpinLock();
+                 // Update currentRotation for potential future use (though visually it stops)
+                 // currentRotation = targetRotation % (2* Math.PI); // Normalize
             }
 
-            function showResult(result) { /* ... (same as before) ... */
-                 resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
-                 resultMessage.innerHTML = `<span>${result.emoji || ''}</span> ${result.label}`; // Add emoji here too
-                 if (result.type === 'win') { playSound(winSound); triggerConfetti(); } else { playSound(loseSound); }
-                 if(resultPopup) resultPopup.classList.add('show');
+            function showResult(result) { /* ... (same) ... */
+                resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
+                resultMessage.innerHTML = `<span>${result.emoji || ''}</span> ${result.label}`;
+                if (result.type === 'win') { playSound(winSound); triggerConfetti(); } else { playSound(loseSound); }
+                if(resultPopup) resultPopup.classList.add('show');
             }
-            function triggerConfetti() { /* ... (same as before) ... */
-                  if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
+            function triggerConfetti() { /* ... (same) ... */
+                 if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
             }
+
+            function populateExternalPrizeList() { /* ... (same) ... */
+                 if (!prizeListUl) return; prizeListUl.innerHTML = '';
+                 const uniquePrizesToShow = segments.filter(s => s.type === 'win'); // Show only winnable prizes
+                 uniquePrizesToShow.forEach(segment => { const li = document.createElement('li'); li.innerHTML = `<span>${segment.emoji || '🎁'}</span> ${segment.label}`; prizeListUl.appendChild(li); });
+                 if (segments.some(s => s.type === 'lose')) { const li = document.createElement('li'); li.innerHTML = `<span>😔</span> Try Again`; prizeListUl.appendChild(li); }
+            }
+
 
             // === Initial Setup ===
-            populatePrizeLabels(); // Add labels to wheel on load
-            populateExternalPrizeList(); // Add prizes to list on load
+            drawWheel(); // Draw the initial state of the wheel
+            populateExternalPrizeList();
 
-            // Event Listeners
+            // Event Listeners & Initial Lock Check ... (same) ...
             if (spinButton) { spinButton.addEventListener('click', spinWheel); } else { console.error("Spin button element not found!"); }
             if (closePopupButton) { closePopupButton.addEventListener('click', () => { if(resultPopup) resultPopup.classList.remove('show'); }); } else { console.error("Popup close button not found!"); }
-
-            // Initial Lock Check
-            if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; }
-            else { if(spinButton) spinButton.disabled = false; }
+            if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; } else { if(spinButton) spinButton.disabled = false; }
 
         }); // DOMContentLoaded End
     </script>
