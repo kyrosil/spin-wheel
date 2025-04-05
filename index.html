@@ -32,20 +32,6 @@
       );
     }
 
-    .wheel-segment {
-      position: absolute;
-      width: 50%;
-      height: 50%;
-      top: 50%;
-      left: 50%;
-      transform-origin: 0% 0%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      color: white;
-    }
-
     #logo {
       position: absolute;
       top: 50%;
@@ -85,13 +71,7 @@
       margin: 20px auto;
     }
 
-    #emailInput {
-      margin-top: 20px;
-      padding: 10px;
-      font-size: 16px;
-    }
-
-    #instagramInput {
+    #emailInput, #instagramInput {
       margin-top: 20px;
       padding: 10px;
       font-size: 16px;
@@ -123,12 +103,8 @@
     const losingSound = new Audio('https://example.com/losing-sound.mp3'); // Kaybetme sesi
     const confettiSound = new Audio('https://example.com/confetti-sound.mp3'); // Konfeti sesi
 
-    let lastSpinTime = localStorage.getItem('lastSpinTime');
-
-    if (lastSpinTime && (new Date() - new Date(lastSpinTime) < 24 * 60 * 60 * 1000)) {
-      alert('Çarkı sadece 24 saatte bir kez döndürebilirsiniz!');
-      btn.disabled = true; // 24 saatlik limit
-    }
+    // 24 saatlik limitin sıfırlanması
+    localStorage.removeItem('lastSpinTime');
 
     btn.addEventListener('click', () => {
       if (!instagramInput.value || !emailInput.value) {
@@ -165,13 +141,15 @@
           }),
         });
 
-     
+        // LocalStorage güncellemesi
+        localStorage.setItem('lastSpinTime', new Date().toISOString());
 
       }, 4000); // 4 saniye bekle, dönüş tamamlanmadan önce
     });
   </script>
 </body>
 </html>
+
 
 
 
