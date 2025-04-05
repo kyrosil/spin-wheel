@@ -1,155 +1,290 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Win with Kyrosil</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #f7f7f7;
-      margin-top: 50px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Win with Kyrosil</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
-    #wheel {
-      width: 300px;
-      height: 300px;
-      border: 10px solid #fff;
-      border-radius: 50%;
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
-      margin: 0 auto;
-      position: relative;
-      overflow: hidden;
-      transition: transform 4s ease-out;
-      background: conic-gradient(
-        #2196f3 0deg 60deg, 
-        #9c27b0 60deg 120deg, 
-        #2196f3 120deg 180deg, 
-        #9c27b0 180deg 240deg, 
-        #2196f3 240deg 300deg, 
-        #9c27b0 300deg 360deg
-      );
-    }
-
-    #logo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 80px;
-      height: 80px;
-      transform: translate(-50%, -50%);
-      background: white;
-      border-radius: 50%;
-      padding: 10px;
-      z-index: 10;
-    }
-
-    #spinBtn {
-      margin-top: 30px;
-      padding: 10px 20px;
-      font-size: 18px;
-      background: #2196f3;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    #result {
-      margin-top: 20px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .pointer {
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 20px solid #333;
-      margin: 20px auto;
-    }
-
-    #emailInput, #instagramInput {
-      margin-top: 20px;
-      padding: 10px;
-      font-size: 16px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Win with Kyrosil</h1>
-  <div id="wheel">
-    <div id="logo">
-      <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
-    </div>
-  </div>
-
-  <input type="text" id="instagramInput" placeholder="Instagram Kullanıcı Adınızı Girin" />
-  <input type="email" id="emailInput" placeholder="Email adresinizi girin" />
-  <button id="spinBtn">Spin</button>
-  <div id="result"></div>
-
-  <script>
-    const wheel = document.getElementById('wheel');
-    const result = document.getElementById('result');
-    const btn = document.getElementById('spinBtn');
-    const instagramInput = document.getElementById('instagramInput');
-    const emailInput = document.getElementById('emailInput');
-
-    const segments = ["10% Off", "Free Shipping", "Nothing 😢", "5% Off", "Mystery Prize", "15% Off"];
-    const winningSound = new Audio('https://example.com/winning-sound.mp3'); // Kazanma sesi
-    const losingSound = new Audio('https://example.com/losing-sound.mp3'); // Kaybetme sesi
-    const confettiSound = new Audio('https://example.com/confetti-sound.mp3'); // Konfeti sesi
-
-    let lastSpinTime = localStorage.getItem('lastSpinTime');
-
-    if (lastSpinTime && (new Date() - new Date(lastSpinTime) < 24 * 60 * 60 * 1000)) {
-      alert('Çarkı sadece 24 saatte bir kez döndürebilirsiniz!');
-      btn.disabled = true; // 24 saatlik limit
-    }
-
-    btn.addEventListener('click', () => {
-      if (!instagramInput.value || !emailInput.value) {
-        alert('Instagram kullanıcı adınızı ve email adresinizi girin!');
-        return;
-      }
-
-      const spinAngle = Math.floor(Math.random() * 360) + 1440; // Minimum 4 dönüş
-      wheel.style.transform = `rotate(${spinAngle}deg)`;
-      const normalizedAngle = spinAngle % 360;
-      const selectedIndex = Math.floor((360 - normalizedAngle + 30) % 360 / 60);
-
-      setTimeout(() => {
-        result.textContent = "You won: " + segments[selectedIndex];
-
-        // Ses efektleri
-        if (segments[selectedIndex] === "Nothing 😢") {
-          losingSound.play();
-        } else {
-          winningSound.play();
-          confettiSound.play(); // Konfeti
+    <style>
+        /* === CSS Kodları Başlangıcı === */
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            overflow-x: hidden; /* Yatay kaydırmayı önle */
+            padding: 10px; /* Küçük ekranlarda kenar boşluğu */
+            box-sizing: border-box;
         }
 
-        // Kazanan bilgileri mail ile gönderme
-        fetch('https://your-mail-api.com/send', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            to: 'spinwheel@kyrosil.eu',
-            subject: 'Kazanan Ödül!',
-            text: `Kazanan: ${instagramInput.value}\nEmail: ${emailInput.value}\nÖdül: ${segments[selectedIndex]}`,
-          }),
-        });
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 100%; /* Genişliği sınırlayalım */
+            width: 450px; /* Maksimum genişlik */
+            box-sizing: border-box;
+        }
 
-        // LocalStorage güncellemesi
-        localStorage.setItem('lastSpinTime', new Date().toISOString());
+        h1 {
+            color: #333;
+             font-size: 1.8em; /* Biraz büyütelim */
+             margin-bottom: 20px;
+        }
 
-      }, 4000); // 4 saniye bekle, dönüş tamamlanmadan önce
-    });
-  </script>
-</body>
-</html>
+        .wheel-wrapper {
+            position: relative;
+            width: 300px; /* Boyutu ayarlayabilirsiniz */
+            height: 300px;
+            margin: 20px auto; /* Boşlukları ayarlayalım */
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px; /* Yukarıdan uzaklık */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #e74c3c; /* Pointer rengi */
+            z-index: 10;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #ddd;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2) inset, 0 0 10px rgba(0, 0, 0, 0.1);
+            background-image: conic-gradient(
+                #3498db 0deg 30deg, #ffffff 30deg 60deg,
+                #3498db 60deg 90deg, #ffffff 90deg 120deg,
+                #3498db 120deg 150deg, #ffffff 150deg 180deg,
+                #3498db 180deg 210deg, #ffffff 210deg 240deg,
+                #3498db 240deg 270deg, #ffffff 270deg 300deg,
+                #3498db 300deg 330deg, #ffffff 330deg 360deg
+            );
+            transition: transform 10s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+
+        .wheel-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+
+        .wheel-logo img {
+            max-width: 70%;
+            max-height: 70%;
+            object-fit: contain;
+        }
+
+        .input-section {
+            margin-top: 25px; /* Boşluğu ayarlayalım */
+        }
+
+        .input-section p {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .input-section input {
+            display: block;
+            width: calc(100% - 22px); /* Padding'i hesaba kat */
+            padding: 10px;
+            margin: 0 auto 10px auto; /* Ortala ve boşluk */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .spin-button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            animation: pulse 1.5s infinite;
+            margin-top: 10px; /* Inputlardan sonra boşluk */
+        }
+
+        .spin-button:hover {
+            background-color: #27ae60;
+            transform: scale(1.05);
+        }
+
+        .spin-button:active {
+            transform: scale(0.98);
+        }
+
+        .spin-button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            animation: none;
+            transform: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .result-popup {
+            /* Popup stilleri aynı kalabilir */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+             opacity: 0; /* Başlangıçta gizli */
+             visibility: hidden; /* Başlangıçta gizli */
+             transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .result-popup.show { /* Görünür yapma class'ı */
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            max-width: 90%; /* Mobil için */
+            width: 350px; /* Max genişlik */
+        }
+
+        .popup-content h2 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        #close-popup {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #close-popup:hover {
+            background-color: #c0392b;
+        }
+
+        /* Mobil Uyumluluk */
+        @media (max-width: 480px) {
+             body {
+                 align-items: flex-start; /* Küçük ekranda yukarı yasla */
+                 padding-top: 20px;
+             }
+             .container {
+                 width: 95%;
+                 padding: 15px 15px; /* Padding azalt */
+             }
+             .wheel-wrapper {
+                 width: 240px; /* Daha küçük */
+                 height: 240px;
+             }
+             .pointer {
+                 border-left-width: 12px;
+                 border-right-width: 12px;
+                 border-top-width: 20px;
+                 top: -15px;
+             }
+             .wheel-logo {
+                 width: 55px; /* Daha küçük */
+                 height: 55px;
+             }
+              h1 {
+                 font-size: 1.5em;
+             }
+             .input-section input {
+                  width: calc(100% - 20px); /* Padding'i hesaba kat */
+             }
+             .spin-button {
+                 padding: 10px 20px;
+                 font-size: 1em;
+             }
+              .popup-content {
+                 padding: 20px 25px;
+                 width: 85%;
+             }
+        }
+        /* === CSS Kodları Sonu === */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Win with Kyrosil</h1>
+
+        <div class="wheel-wrapper">
+            <div class="pointer">▼</div>
+            <div class="wheel" id="wheel">
+                <div class="wheel-logo">
+                    <img src="logo.png" alt="Logo">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-section" id="input-section">
+            <p>Kazanmak için bilgilerinizi girin ve çevirin!</p>
+            <input type="email" id="email" placeholder="E-posta Adresiniz" required>
+            <input type="text" id="instagram" placeholder="Instagram Kullanıcı Adınız" required>
+            <button class="spin-button" id="spin-button">Çarkı Çevir!</button>
+        </div>
+
+        <div class="result-popup" id="result-popup"> <div class="popup-content">
+                <h2 id="result-title">Tebrikler!</h2>
+                <p id="result-message">Harika bir ödül kazandınız!</p>
+                <button id="close-popup">Kapat</button>
+            </div>
+        </div>
+
+        <audio id="click-sound" src="click.mp3" preload="auto"></audio>
+        <audio id="win-sound" src="win.mp3" preload="auto"></audio>
+        <audio id="lose-sound" src="lose.mp3" preload="auto"></audio>
+
+    </div>
+
+    <script>
+        // === JavaScript Kodları Başlangıcı ===
+        document.addEventListener('DOMContentLoaded', () => { // Sayfa tamamen yüklendiğinde başla
+
+            // === DOM Elementleri ===
+            const wheel =
