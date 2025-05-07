@@ -405,7 +405,7 @@
             const minSpins = 4;
             const localStorageKey = 'kyrosilWheelLastSpin_v5_new_prob';
             const lockDurationHours = 24;
-            const colors = ['#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44', '#0f1a2f'];
+            const colors = ['#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44'];
             const textColor = '#fff';
             const textFont = 'bold 12px Poppins, sans-serif';
 
@@ -423,7 +423,7 @@
             ];
             const numberOfPrizes = segments.length;
             const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
-            if (Math.abs(totalProb - 100) > 0.01) { console.error(`Probabilities sum to ${totalProb}, not 100!`); alert("Config Error!"); if(spinButton) spinButton.disabled = true;}
+            if (Math.abs(totalProb - 100) > 0.01) { console.error(`Probabilities sum to ${totalProb}, not 100!`); alert("Config Error!"); if(spinButton) spinButton.disabled = true; }
 
             let isSpinning = false;
             let currentRotation = 0;
@@ -433,7 +433,6 @@
             let clickInterval;
             let determinedWinnerSegment = null;
             let lastSegmentIndex = -1;
-            let pointerAngle = 0;
 
             function drawSegment(index, color) {
                 const startAngle = index * visualSegmentAngle;
@@ -450,6 +449,7 @@
                 ctx.shadowColor = '#ff006e';
                 ctx.shadowBlur = 10;
             }
+
             function drawSegmentText(index) {
                 const segmentData = segments[index];
                 if (!segmentData) return;
@@ -469,6 +469,7 @@
                 ctx.fillText(text, textRadius, 0, maxWidth);
                 ctx.restore();
             }
+
             function drawWheel() {
                 ctx.clearRect(0, 0, canvasSize, canvasSize);
                 ctx.beginPath();
@@ -493,7 +494,9 @@
                     ctx.stroke();
                 }
             }
+
             function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
             function spinAnimationLoop(timestamp) {
                 if (!spinStartTime) { spinStartTime = timestamp; }
                 const elapsed = timestamp - spinStartTime;
@@ -524,37 +527,48 @@
                     handleSpinEnd();
                 }
             }
+
             function determineWinnerByProbability(segmentData) {
                 const randomPick = Math.random() * 100;
                 let cumulativeProbability = 0;
-                for (const segment of segmentData) {
-                    cumulativeProbability += segment.probability;
-                    if (randomPick < cumulativeProbability) return segment;
+                for (let i = 0; i < segmentData.length; i++) {
+                    cumulativeProbability += segmentData[i].probability;
+                    if (randomPick < cumulativeProbability) {
+                        console.log(`Winner determined: ${segmentData[i].label} at index ${i}`);
+                        return { ...segmentData[i], visualIndex: i };
+                    }
                 }
-                return segmentData[segmentData.length - 1];
+                console.log(`Default winner: ${segmentData[segmentData.length - 1].label} at index ${segmentData.length - 1}`);
+                return { ...segmentData[segmentData.length - 1], visualIndex: segmentData.length - 1 };
             }
+
             function checkSpinLock() {
                 const lastSpinTime = localStorage.getItem(localStorageKey);
                 if (!lastSpinTime) return false;
                 const timeDiff = Date.now() - parseInt(lastSpinTime, 10);
                 return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
             }
+
             function setSpinLock() {
                 localStorage.setItem(localStorageKey, Date.now().toString());
             }
+
             function playSound(soundElement) {
                 if (soundElement?.play) {
                     soundElement.currentTime = 0;
                     soundElement.play().catch(e => console.warn("Sound play failed:", e));
                 }
             }
+
             function startClickSoundLoop() {
                 stopClickSoundLoop();
             }
+
             function stopClickSoundLoop() {
                 clearTimeout(clickInterval);
                 lastSegmentIndex = -1;
             }
+
             function validateInputs() {
                 const emailValue = emailInput.value.trim();
                 const instagramValue = instagramInput.value.trim();
@@ -568,6 +582,7 @@
                 }
                 return true;
             }
+
             function sendSpinResultToBackend(dataToSend) {
                 const formspreeEndpoint = 'https://formspree.io/f/xblgznvz';
                 fetch(formspreeEndpoint, {
@@ -592,6 +607,7 @@
                     console.error('Network error sending to Formspree:', error);
                 });
             }
+
             function spinWheel() {
                 if (isSpinning) return;
                 if (checkSpinLock()) {
@@ -604,54 +620,53 @@
                 determinedWinnerSegment = null;
                 spinStartTime = null;
                 determinedWinnerSegment = determineWinnerByProbability(segments);
-                const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
-                const visualTargetIndex = winningPrizeIndex % visualSegmentCount;
-                const targetSegmentMiddleAngle = (visualSegmentAngle * visualTargetIndex) + (visualSegmentAngle / 2);
-                const normalizedCurrentRotation = (currentRotation % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI);
+                const targetSegmentIndex = determinedWinnerSegment.visualIndex;
+                const targetSegmentMiddleAngle = (visualSegmentAngle * targetSegmentIndex) + (visualSegmentAngle / 2);
+                const normalizedCurrentRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
                 const desiredStopAngle = (2 * Math.PI - targetSegmentMiddleAngle + (Math.PI / 2)) % (2 * Math.PI);
                 let rotationNeeded = desiredStopAngle - normalizedCurrentRotation;
                 if (rotationNeeded < 0) {
-                    rotationNeeded += (2 * Math.PI);
+                    rotationNeeded += 2 * Math.PI;
                 }
-                const randomExtraRotation = Math.random() * visualSegmentAngle * 0.2; // Daha az rastgelelik
-                targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI) + randomExtraRotation;
+                targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI);
+                console.log(`Spinning to segment ${targetSegmentIndex}: ${determinedWinnerSegment.label}`);
                 cancelAnimationFrame(animationFrameId);
                 startClickSoundLoop();
                 animationFrameId = requestAnimationFrame(spinAnimationLoop);
             }
+
             function handleSpinEnd() {
                 isSpinning = false;
                 stopClickSoundLoop();
                 cancelAnimationFrame(animationFrameId);
-                if (determinedWinnerSegment) {
-                    const finalSegmentIndex = Math.floor(((targetRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)) / visualSegmentAngle) % visualSegmentCount;
-                    if (segments[finalSegmentIndex].id !== determinedWinnerSegment.id) {
-                        console.warn("Segment mismatch detected, correcting to:", determinedWinnerSegment.id);
-                        const correctionAngle = (determinedWinnerSegment.id === segments[finalSegmentIndex].id) ? 0 : (visualSegmentAngle * (segments.findIndex(s => s.id === determinedWinnerSegment.id) - finalSegmentIndex));
-                        targetRotation += correctionAngle;
-                        ctx.clearRect(0, 0, canvasSize, canvasSize);
-                        ctx.save();
-                        ctx.translate(centerX, centerY);
-                        ctx.rotate(targetRotation);
-                        ctx.translate(-centerX, -centerY);
-                        drawWheel();
-                        ctx.restore();
-                    }
-                    const submissionData = {
-                        email: emailInput.value.trim(),
-                        instagram: instagramInput.value.trim(),
-                        prizeWon: determinedWinnerSegment.label,
-                        prizeID: determinedWinnerSegment.id,
-                        spinTimestamp: new Date().toISOString()
-                    };
-                    sendSpinResultToBackend(submissionData);
-                    showResult(determinedWinnerSegment);
-                } else {
-                    console.error("Spin ended but no winner determined!");
-                    showResult(segments.find(s => s.type === 'lose') || segments[0]);
+                const finalAngle = targetRotation % (2 * Math.PI);
+                const finalSegmentIndex = Math.floor((finalAngle / visualSegmentAngle)) % visualSegmentCount;
+                console.log(`Final angle: ${finalAngle}, Final segment: ${finalSegmentIndex} (${segments[finalSegmentIndex].label})`);
+                if (segments[finalSegmentIndex].id !== determinedWinnerSegment.id) {
+                    console.warn(`Mismatch detected! Expected ${determinedWinnerSegment.label}, got ${segments[finalSegmentIndex].label}. Correcting...`);
+                    const correction = (determinedWinnerSegment.visualIndex - finalSegmentIndex + visualSegmentCount) % visualSegmentCount;
+                    targetRotation += correction * visualSegmentAngle;
+                    ctx.clearRect(0, 0, canvasSize, canvasSize);
+                    ctx.save();
+                    ctx.translate(centerX, centerY);
+                    ctx.rotate(targetRotation);
+                    ctx.translate(-centerX, -centerY);
+                    drawWheel();
+                    ctx.restore();
+                    console.log(`Corrected to segment ${determinedWinnerSegment.visualIndex}: ${determinedWinnerSegment.label}`);
                 }
+                const submissionData = {
+                    email: emailInput.value.trim(),
+                    instagram: instagramInput.value.trim(),
+                    prizeWon: determinedWinnerSegment.label,
+                    prizeID: determinedWinnerSegment.id,
+                    spinTimestamp: new Date().toISOString()
+                };
+                sendSpinResultToBackend(submissionData);
+                showResult(determinedWinnerSegment);
                 setSpinLock();
             }
+
             function showResult(result) {
                 resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
                 resultMessage.innerHTML = `<span style="font-size: 1.5em">${result.emoji || ''}</span> ${result.label}`;
@@ -663,6 +678,7 @@
                 }
                 if(resultPopup) resultPopup.classList.add('show');
             }
+
             function triggerConfetti() {
                 if (typeof confetti === 'function') {
                     confetti({
@@ -675,6 +691,7 @@
                     console.warn("Confetti function not found.");
                 }
             }
+
             function populateExternalPrizeList() {
                 if (!prizeListUl) return;
                 prizeListUl.innerHTML = '';
