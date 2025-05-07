@@ -18,9 +18,9 @@
             overflow-x: hidden;
             padding: 20px 10px;
             box-sizing: border-box;
-            background: linear-gradient(45deg, #ff006e, #1a2a44, #ff4d94, #1a2a44);
+            background: linear-gradient(45deg, #ff006e, #0f1a2f, #ff4d94, #0f1a2f);
             background-size: 400%;
-            animation: gradientShift 8s ease infinite;
+            animation: gradientShift 10s ease infinite;
         }
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
@@ -32,11 +32,11 @@
             background: rgba(255, 255, 255, 0.05);
             padding: 30px 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             max-width: 100%;
             width: 500px;
             margin-bottom: 25px;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
         h1 {
@@ -44,7 +44,7 @@
             font-size: 2.5em;
             margin-bottom: 30px;
             font-weight: 700;
-            text-shadow: 0 0 15px #ff006e, 0 0 30px #ff4d94;
+            text-shadow: 0 0 10px #ff006e;
         }
         .wheel-container {
             margin-bottom: 40px;
@@ -54,27 +54,31 @@
             width: 340px;
             height: 340px;
             margin: 30px auto;
-            perspective: 1000px;
+            perspective: 500px;
         }
         #prizeWheelCanvas {
             display: block;
             max-width: 100%;
             height: auto;
-            transform: rotateX(20deg);
-            filter: drop-shadow(0 0 25px rgba(255, 0, 110, 0.7));
+            transform: rotateX(15deg);
+            filter: drop-shadow(0 0 20px rgba(255, 0, 110, 0.6));
             transition: transform 0.3s ease;
         }
         .pointer {
             position: absolute;
-            top: 10px;
+            top: 20px;
             left: 50%;
-            transform: translateX(-50%) rotate(-45deg);
-            width: 10px;
-            height: 50px;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 40px;
             background: linear-gradient(145deg, #ff006e, #ff4d94);
             z-index: 10;
             border-radius: 5px;
             box-shadow: 0 0 15px #ff006e;
+            transition: transform 0.1s ease;
+        }
+        .pointer.tick {
+            transform: translateX(-50%) rotate(5deg);
         }
         .wheel-logo {
             position: absolute;
@@ -88,7 +92,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 0 30px rgba(255, 255, 255, 0.7);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2), 0 0 20px rgba(255, 255, 255, 0.5);
             z-index: 7;
             padding: 8px;
             transition: transform 0.3s ease;
@@ -130,7 +134,7 @@
         }
         .input-section input:focus {
             border-color: #ff006e;
-            box-shadow: 0 0 10px #ff006e;
+            box-shadow: 0 0 8px #ff006e;
             outline: none;
         }
         .spin-button {
@@ -143,22 +147,22 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 20px #ff006e, 0 0 40px #ff4d94;
+            box-shadow: 0 0 15px #ff006e;
             animation: pulse 1s infinite;
         }
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px #ff006e; }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px #ff4d94; }
-            100% { transform: scale(1); box-shadow: 0 0 20px #ff006e; }
+            0% { transform: scale(1); box-shadow: 0 0 15px #ff006e; }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px #ff4d94; }
+            100% { transform: scale(1); box-shadow: 0 0 15px #ff006e; }
         }
         .spin-button:hover {
             background: linear-gradient(90deg, #ffd700, #ff4d94, #ff006e);
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px #ff006e, 0 0 60px #ff4d94;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px #ff006e;
         }
         .spin-button:active {
             transform: translateY(0);
-            box-shadow: 0 0 15px #ff006e;
+            box-shadow: 0 0 10px #ff006e;
         }
         .spin-button:disabled {
             background: #555;
@@ -172,7 +176,7 @@
             padding: 25px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             max-width: 100%;
             width: 500px;
             text-align: left;
@@ -229,18 +233,18 @@
             z-index: 100;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
         .result-popup.show {
             opacity: 1;
             visibility: visible;
         }
         .popup-content {
-            background: linear-gradient(145deg, #1a2a44, #2c3e50);
-            padding: 40px 50px;
+            background: linear-gradient(145deg, #0f1a2f, #2c3e50);
+            padding: 30px 40px;
             border-radius: 15px;
             text-align: center;
-            box-shadow: 0 0 40px #ff006e, 0 0 80px #ff4d94;
+            box-shadow: 0 0 30px #ff006e;
             max-width: 90%;
             width: 400px;
             transform: scale(0.7);
@@ -253,30 +257,30 @@
         .popup-content h2 {
             margin-top: 0;
             color: #fff;
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            text-shadow: 0 0 15px #ff006e;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #ff006e;
         }
         .popup-content p {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #ddd;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         #close-popup {
-            padding: 12px 25px;
+            padding: 10px 20px;
             background: linear-gradient(90deg, #ff006e, #ff4d94);
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1.1em;
+            font-size: 1em;
             transition: all 0.2s ease;
-            box-shadow: 0 0 15px #ff006e;
+            box-shadow: 0 0 10px #ff006e;
         }
         #close-popup:hover {
             background: linear-gradient(90deg, #ff4d94, #ff006e);
             transform: translateY(-2px);
-            box-shadow: 0 0 30px #ff006e;
+            box-shadow: 0 0 15px #ff006e;
         }
         @media (max-width: 520px) {
             .container, .info-section {
@@ -292,9 +296,9 @@
                 height: 280px;
             }
             .pointer {
-                top: 5px;
-                height: 40px;
-                width: 8px;
+                top: 15px;
+                height: 30px;
+                width: 6px;
             }
             .wheel-logo {
                 width: 80px;
@@ -313,14 +317,14 @@
                 font-size: 1.1em;
             }
             .popup-content {
-                padding: 30px 35px;
+                padding: 25px 30px;
                 width: 85%;
             }
             .popup-content h2 {
-                font-size: 1.5em;
+                font-size: 1.3em;
             }
             .popup-content p {
-                font-size: 1.1em;
+                font-size: 1em;
             }
         }
     </style>
@@ -330,7 +334,7 @@
         <h1>Win with Kyrosil</h1>
         <div class="wheel-container">
             <div class="wheel-wrapper" id="wheel-wrapper">
-                <div class="pointer"></div>
+                <div class="pointer" id="pointer"></div>
                 <canvas id="prizeWheelCanvas" width="340" height="340"></canvas>
                 <div class="wheel-logo">
                     <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
@@ -386,6 +390,7 @@
             const winSound = document.getElementById('win-sound');
             const loseSound = document.getElementById('lose-sound');
             const prizeListUl = document.getElementById('prize-list-ul');
+            const pointer = document.getElementById('pointer');
 
             if (!canvas || !canvas.getContext) { alert("Canvas not supported!"); if(spinButton) spinButton.disabled = true; return; }
             const ctx = canvas.getContext('2d');
@@ -396,12 +401,12 @@
 
             const visualSegmentCount = 12;
             const visualSegmentAngle = (2 * Math.PI) / visualSegmentCount;
-            const spinDurationSeconds = 10;
-            const minSpins = 5;
+            const spinDurationSeconds = 12;
+            const minSpins = 4;
             const localStorageKey = 'kyrosilWheelLastSpin_v5_new_prob';
             const lockDurationHours = 24;
-            const colors = ['#1a2a44', '#2c3e50', '#1a2a44', '#2c3e50', '#1a2a44', '#2c3e50'];
-            const textColor = '#ff006e';
+            const colors = ['#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44'];
+            const textColor = '#fff';
             const textFont = 'bold 10px Poppins, sans-serif';
 
             const segments = [
@@ -412,7 +417,7 @@
                 { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 2 },
                 { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
                 { id: 'HOODIE', label: "Kyrosil Hoodie", emoji: "🧥", type: "win", probability: 2 },
-                { id: 'GREEK', label: "₺1500 Yunandan Gelsin", emoji: "🇬🇷", type: "win", probability: 1 },
+                { id: 'TRENDYOL', label: "Trendyol 30 EUR/1500 TL Gift Code", emoji: "🛍️", type: "win", probability: 1 },
                 { id: 'IGA', label: "1 Day IGA PASS", emoji: "✈️", type: "win", probability: 0.8 },
                 { id: 'TURKISH_AIR', label: "$100 THY Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
             ];
@@ -428,6 +433,7 @@
             let clickInterval;
             let determinedWinnerSegment = null;
             let lastSegmentIndex = -1;
+            let pointerAngle = 0;
 
             function drawSegment(index, color) {
                 const startAngle = index * visualSegmentAngle;
@@ -442,7 +448,7 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
                 ctx.shadowColor = '#ff006e';
-                ctx.shadowBlur = 15;
+                ctx.shadowBlur = 10;
             }
             function drawSegmentText(index) {
                 const prizeIndex = index % numberOfPrizes;
@@ -456,6 +462,8 @@
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = textColor;
                 ctx.font = textFont;
+                ctx.shadowColor = '#000';
+                ctx.shadowBlur = 2;
                 const textRadius = radius * 0.6;
                 const maxWidth = radius * 0.8;
                 const text = `${segmentData.emoji || ''} ${segmentData.label}`;
@@ -467,10 +475,10 @@
                 ctx.beginPath();
                 ctx.arc(centerX, centerY, radius + 3, 0, 2 * Math.PI, false);
                 ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 6;
+                ctx.lineWidth = 4;
                 ctx.stroke();
                 ctx.shadowColor = '#ff006e';
-                ctx.shadowBlur = 15;
+                ctx.shadowBlur = 10;
                 for (let i = 0; i < visualSegmentCount; i++) {
                     drawSegment(i, colors[i % colors.length]);
                     drawSegmentText(i);
@@ -482,7 +490,7 @@
                     ctx.moveTo(centerX, centerY);
                     ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
                     ctx.strokeStyle = '#888';
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 2;
                     ctx.stroke();
                 }
             }
@@ -502,9 +510,12 @@
                 ctx.translate(-centerX, -centerY);
                 drawWheel();
                 ctx.restore();
-                const currentSegmentIndex = Math.floor(((angleNow % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI) / visualSegmentAngle) % visualSegmentCount;
+                const currentSegmentIndex = Math.floor(((angleNow % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)) / visualSegmentAngle) % visualSegmentCount;
                 if (isSpinning && lastSegmentIndex !== currentSegmentIndex) {
                     playSound(clickSound);
+                    pointer.classList.remove('tick');
+                    void pointer.offsetWidth;
+                    pointer.classList.add('tick');
                     lastSegmentIndex = currentSegmentIndex;
                 }
                 if (progress < 1) {
@@ -596,14 +607,14 @@
                 determinedWinnerSegment = determineWinnerByProbability(segments);
                 const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
                 const visualTargetIndex = winningPrizeIndex % visualSegmentCount;
-                const targetSegmentMiddleAngle = visualTargetIndex * visualSegmentAngle + visualSegmentAngle / 2;
-                const randomExtraRotation = Math.random() * visualSegmentAngle * 0.5;
+                const targetSegmentMiddleAngle = (visualSegmentAngle * visualTargetIndex) + (visualSegmentAngle / 2);
                 const normalizedCurrentRotation = (currentRotation % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI);
-                const desiredStopAngle = (2 * Math.PI - targetSegmentMiddleAngle) % (2 * Math.PI);
+                const desiredStopAngle = (2 * Math.PI - targetSegmentMiddleAngle + (Math.PI / 2)) % (2 * Math.PI);
                 let rotationNeeded = desiredStopAngle - normalizedCurrentRotation;
                 if (rotationNeeded < 0) {
                     rotationNeeded += (2 * Math.PI);
                 }
+                const randomExtraRotation = Math.random() * visualSegmentAngle * 0.5;
                 targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI) + randomExtraRotation;
                 cancelAnimationFrame(animationFrameId);
                 startClickSoundLoop();
@@ -643,10 +654,10 @@
             function triggerConfetti() {
                 if (typeof confetti === 'function') {
                     confetti({
-                        particleCount: 400,
-                        spread: 180,
+                        particleCount: 200,
+                        spread: 120,
                         origin: { y: 0.5 },
-                        colors: ['#ff006e', '#ff4d94', '#ffd700', '#00ff9f', '#ff00ff']
+                        colors: ['#ff006e', '#ff4d94']
                     });
                 } else {
                     console.warn("Confetti function not found.");
