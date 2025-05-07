@@ -399,15 +399,15 @@
             const centerY = canvasSize / 2;
             const radius = canvasSize / 2 - 10;
 
-            const visualSegmentCount = 12;
+            const visualSegmentCount = 10;
             const visualSegmentAngle = (2 * Math.PI) / visualSegmentCount;
             const spinDurationSeconds = 12;
             const minSpins = 4;
             const localStorageKey = 'kyrosilWheelLastSpin_v5_new_prob';
             const lockDurationHours = 24;
-            const colors = ['#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44'];
+            const colors = ['#0f1a2f', '#1a2a44', '#0f1a2f', '#1a2a44', '#0f1a2f'];
             const textColor = '#fff';
-            const textFont = 'bold 10px Poppins, sans-serif';
+            const textFont = 'bold 12px Poppins, sans-serif';
 
             const segments = [
                 { id: 'STARBUCKS', label: "$5 / ₺200 Starbucks", emoji: "☕", type: "win", probability: 2 },
@@ -451,8 +451,7 @@
                 ctx.shadowBlur = 10;
             }
             function drawSegmentText(index) {
-                const prizeIndex = index % numberOfPrizes;
-                const segmentData = segments[prizeIndex];
+                const segmentData = segments[index];
                 if (!segmentData) return;
                 const angle = index * visualSegmentAngle + visualSegmentAngle / 2;
                 ctx.save();
@@ -614,7 +613,7 @@
                 if (rotationNeeded < 0) {
                     rotationNeeded += (2 * Math.PI);
                 }
-                const randomExtraRotation = Math.random() * visualSegmentAngle * 0.5;
+                const randomExtraRotation = Math.random() * visualSegmentAngle * 0.2; // Daha az rastgelelik
                 targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI) + randomExtraRotation;
                 cancelAnimationFrame(animationFrameId);
                 startClickSoundLoop();
@@ -625,6 +624,19 @@
                 stopClickSoundLoop();
                 cancelAnimationFrame(animationFrameId);
                 if (determinedWinnerSegment) {
+                    const finalSegmentIndex = Math.floor(((targetRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)) / visualSegmentAngle) % visualSegmentCount;
+                    if (segments[finalSegmentIndex].id !== determinedWinnerSegment.id) {
+                        console.warn("Segment mismatch detected, correcting to:", determinedWinnerSegment.id);
+                        const correctionAngle = (determinedWinnerSegment.id === segments[finalSegmentIndex].id) ? 0 : (visualSegmentAngle * (segments.findIndex(s => s.id === determinedWinnerSegment.id) - finalSegmentIndex));
+                        targetRotation += correctionAngle;
+                        ctx.clearRect(0, 0, canvasSize, canvasSize);
+                        ctx.save();
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate(targetRotation);
+                        ctx.translate(-centerX, -centerY);
+                        drawWheel();
+                        ctx.restore();
+                    }
                     const submissionData = {
                         email: emailInput.value.trim(),
                         instagram: instagramInput.value.trim(),
