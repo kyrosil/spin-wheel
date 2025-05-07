@@ -5,50 +5,323 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Win with Kyrosil</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* === CSS === (Unchanged from previous Canvas version) */
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background-color: #f4f4f4; margin: 0; overflow-x: hidden; padding: 20px 10px; box-sizing: border-box; }
-        .container { text-align: center; background-color: #fff; padding: 25px 35px; border-radius: 18px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); max-width: 100%; width: 480px; box-sizing: border-box; margin-bottom: 20px; }
-        h1 { color: #2c3e50; font-size: 2em; margin-bottom: 25px; font-weight: 600; }
-        .wheel-container { margin-bottom: 30px; }
-        .wheel-wrapper { position: relative; width: 320px; height: 320px; margin: 25px auto; }
-        #prizeWheelCanvas { display: block; max-width: 100%; height: auto; }
-        .pointer { position: absolute; top: -22px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 16px solid transparent; border-right: 16px solid transparent; border-top: 28px solid #e74c3c; z-index: 10; filter: drop-shadow(2px 3px 3px rgba(0,0,0,0.25)); }
-        .wheel-logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90px; height: 90px; background-color: #fff; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 12px rgba(0,0,0,0.15); z-index: 7; padding: 5px; box-sizing: border-box; }
-        .wheel-logo img { max-width: 85%; max-height: 85%; object-fit: contain; border-radius: 50%; }
-        .input-section { margin-top: 30px; }
-        .input-section p { margin-bottom: 18px; color: #555; font-size: 0.95em; }
-        .input-section input { display: block; width: calc(100% - 24px); padding: 12px; margin: 0 auto 12px auto; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
-        .spin-button { padding: 14px 30px; font-size: 1.15em; font-weight: 600; background-color: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease; margin-top: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .spin-button:hover { background-color: #27ae60; transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); }
-        .spin-button:active { transform: translateY(1px); box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1); }
-        .spin-button:disabled { background-color: #bdc3c7; cursor: not-allowed; transform: none; box-shadow: none; animation: none; }
-        .info-section { margin-top: 20px; padding: 20px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); max-width: 100%; width: 480px; box-sizing: border-box; text-align: left; }
-        .info-section h4 { margin-top: 0; margin-bottom: 10px; color: #2c3e50; border-bottom: 1px solid #ecf0f1; padding-bottom: 8px; }
-        .prize-list ul, .rules ul { list-style: none; padding: 0; margin: 0; }
-        .prize-list li, .rules li { margin-bottom: 8px; color: #555; font-size: 0.9em; display: flex; align-items: center; }
-        .prize-list li span { margin-right: 8px; font-size: 1.1em; display: inline-block; width: 20px; text-align: center; }
-        .rules li::before { content: "•"; color: #3498db; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; margin-right: 0.5em; }
-        .rules { margin-top: 20px; }
-        .result-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.65); display: flex; justify-content: center; align-items: center; z-index: 100; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-        .result-popup.show { opacity: 1; visibility: visible; }
-        .popup-content { background-color: white; padding: 35px 45px; border-radius: 12px; text-align: center; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2); max-width: 90%; width: 380px; }
-        .popup-content h2 { margin-top: 0; color: #333; font-size: 1.6em; margin-bottom: 15px;}
-        .popup-content p { font-size: 1.1em; color: #555; margin-bottom: 25px;}
-        #close-popup { padding: 11px 22px; background-color: #e74c3c; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; transition: background-color 0.2s ease; }
-        #close-popup:hover { background-color: #c0392b; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            background: linear-gradient(45deg, #ff006e, #1a2a44, #ff4d94, #1a2a44);
+            background-size: 400%;
+            animation: gradientShift 8s ease infinite;
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 100%;
+            width: 500px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        h1 {
+            color: #fff;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            font-weight: 700;
+            text-shadow: 0 0 15px #ff006e, 0 0 30px #ff4d94;
+        }
+        .wheel-container {
+            margin-bottom: 40px;
+        }
+        .wheel-wrapper {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            margin: 30px auto;
+            perspective: 1000px;
+        }
+        #prizeWheelCanvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            transform: rotateX(20deg);
+            filter: drop-shadow(0 0 25px rgba(255, 0, 110, 0.7));
+            transition: transform 0.3s ease;
+        }
+        .pointer {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-45deg);
+            width: 10px;
+            height: 50px;
+            background: linear-gradient(145deg, #ff006e, #ff4d94);
+            z-index: 10;
+            border-radius: 5px;
+            box-shadow: 0 0 15px #ff006e;
+        }
+        .wheel-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #d0d0d0, #ffffff);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 0 30px rgba(255, 255, 255, 0.7);
+            z-index: 7;
+            padding: 8px;
+            transition: transform 0.3s ease;
+        }
+        .wheel-logo:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        .wheel-logo img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+        .input-section {
+            margin-top: 35px;
+        }
+        .input-section p {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1em;
+            font-weight: 500;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        .input-section input {
+            display: block;
+            width: calc(100% - 30px);
+            padding: 14px;
+            margin: 0 auto 15px auto;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .input-section input::placeholder {
+            color: #fff;
+            opacity: 0.8;
+        }
+        .input-section input:focus {
+            border-color: #ff006e;
+            box-shadow: 0 0 10px #ff006e;
+            outline: none;
+        }
+        .spin-button {
+            padding: 15px 35px;
+            font-size: 1.3em;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ff006e, #ff4d94, #ffd700);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px #ff006e, 0 0 40px #ff4d94;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px #ff006e; }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px #ff4d94; }
+            100% { transform: scale(1); box-shadow: 0 0 20px #ff006e; }
+        }
+        .spin-button:hover {
+            background: linear-gradient(90deg, #ffd700, #ff4d94, #ff006e);
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px #ff006e, 0 0 60px #ff4d94;
+        }
+        .spin-button:active {
+            transform: translateY(0);
+            box-shadow: 0 0 15px #ff006e;
+        }
+        .spin-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            animation: none;
+        }
+        .info-section {
+            margin-top: 25px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            max-width: 100%;
+            width: 500px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .info-section h4 {
+            margin: 0 0 15px;
+            color: #fff;
+            font-size: 1.4em;
+            border-bottom: 2px solid #ff006e;
+            padding-bottom: 10px;
+            text-shadow: 0 0 5px #ff006e;
+        }
+        .prize-list ul, .rules ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .prize-list li, .rules li {
+            margin-bottom: 12px;
+            color: #ddd;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s ease;
+        }
+        .prize-list li:hover {
+            transform: translateX(5px);
+        }
+        .prize-list li span {
+            margin-right: 10px;
+            font-size: 1.4em;
+            width: 25px;
+            text-align: center;
+        }
+        .rules li::before {
+            content: "•";
+            color: #ff006e;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-right: 0.5em;
+        }
+        .result-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .result-popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .popup-content {
+            background: linear-gradient(145deg, #1a2a44, #2c3e50);
+            padding: 40px 50px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 0 40px #ff006e, 0 0 80px #ff4d94;
+            max-width: 90%;
+            width: 400px;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+            border: 2px solid #ff006e;
+        }
+        .result-popup.show .popup-content {
+            transform: scale(1);
+        }
+        .popup-content h2 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px #ff006e;
+        }
+        .popup-content p {
+            font-size: 1.2em;
+            color: #ddd;
+            margin-bottom: 30px;
+        }
+        #close-popup {
+            padding: 12px 25px;
+            background: linear-gradient(90deg, #ff006e, #ff4d94);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 15px #ff006e;
+        }
+        #close-popup:hover {
+            background: linear-gradient(90deg, #ff4d94, #ff006e);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px #ff006e;
+        }
         @media (max-width: 520px) {
-             .container, .info-section { width: 95%; padding: 20px 20px; }
-             .wheel-wrapper { width: 280px; height: 280px; }
-             #prizeWheelCanvas { width: 280px; height: 280px; } /* Match wrapper */
-             .pointer { border-left-width: 14px; border-right-width: 14px; border-top-width: 24px; top: -18px;}
-             .wheel-logo { width: 75px; height: 75px; }
-             h1 { font-size: 1.7em; }
-             .input-section input { width: calc(100% - 22px); padding: 11px; }
-             .spin-button { padding: 12px 25px; font-size: 1.05em; }
-             .popup-content { padding: 25px 30px; width: 90%; }
-             .popup-content h2 {font-size: 1.4em;} .popup-content p {font-size: 1em;}
+            .container, .info-section {
+                width: 90%;
+                padding: 20px;
+            }
+            .wheel-wrapper {
+                width: 280px;
+                height: 280px;
+            }
+            #prizeWheelCanvas {
+                width: 280px;
+                height: 280px;
+            }
+            .pointer {
+                top: 5px;
+                height: 40px;
+                width: 8px;
+            }
+            .wheel-logo {
+                width: 80px;
+                height: 80px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .input-section input {
+                width: calc(100% - 20px);
+                padding: 12px;
+                font-size: 1em;
+            }
+            .spin-button {
+                padding: 12px 30px;
+                font-size: 1.1em;
+            }
+            .popup-content {
+                padding: 30px 35px;
+                width: 85%;
+            }
+            .popup-content h2 {
+                font-size: 1.5em;
+            }
+            .popup-content p {
+                font-size: 1.1em;
+            }
         }
     </style>
 </head>
@@ -57,8 +330,8 @@
         <h1>Win with Kyrosil</h1>
         <div class="wheel-container">
             <div class="wheel-wrapper" id="wheel-wrapper">
-                <div class="pointer">▼</div>
-                <canvas id="prizeWheelCanvas" width="320" height="320"></canvas>
+                <div class="pointer"></div>
+                <canvas id="prizeWheelCanvas" width="340" height="340"></canvas>
                 <div class="wheel-logo">
                     <img src="https://kyrosil.wordpress.com/wp-content/uploads/2025/04/cropped-adsiz_tasarim-removebg-preview-1.png?w=300" alt="Kyrosil Logo">
                 </div>
@@ -102,7 +375,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('prizeWheelCanvas');
-            // --- Other DOM elements --- (same as before)
             const spinButton = document.getElementById('spin-button');
             const emailInput = document.getElementById('email');
             const instagramInput = document.getElementById('instagram');
@@ -122,146 +394,301 @@
             const centerY = canvasSize / 2;
             const radius = canvasSize / 2 - 10;
 
-            // Settings
             const visualSegmentCount = 12;
             const visualSegmentAngle = (2 * Math.PI) / visualSegmentCount;
             const spinDurationSeconds = 10;
             const minSpins = 5;
-            const localStorageKey = 'kyrosilWheelLastSpin_v5_new_prob'; // Update key again
+            const localStorageKey = 'kyrosilWheelLastSpin_v5_new_prob';
             const lockDurationHours = 24;
-            const colors = ['#3498db', '#ffffff'];
-            const textColor = '#333';
-            const textFont = 'bold 11px Arial, sans-serif';
+            const colors = ['#1a2a44', '#2c3e50', '#1a2a44', '#2c3e50', '#1a2a44', '#2c3e50'];
+            const textColor = '#ff006e';
+            const textFont = 'bold 10px Poppins, sans-serif';
 
-            // === UPDATED Prizes and Probabilities (New Probabilities & Order) ===
             const segments = [
-                // { id: 'unique_code', label: "Prize Name", emoji: "❓", type: "win/lose", probability: chance% },
-                { id: 'STARBUCKS',   label: "$5 / ₺200 Starbucks",        emoji: "☕", type: "win",  probability: 2 },   // Prize 1 (2%)
-                { id: 'TRY_AGAIN_1', label: "Try Again",                  emoji: "😔", type: "lose", probability: 30 },  // Try Again 1 (30%)
-                { id: 'CARREFOUR',   label: "€10 / ₺350 Carrefour",      emoji: "🛒", type: "win",  probability: 2 },   // Prize 2 (2%)
-                { id: 'TRY_AGAIN_2', label: "Try Again",                  emoji: "😔", type: "lose", probability: 30 },  // Try Again 2 (30%)
-                { id: 'MAVI',        label: "₺400 Mavi Point",            emoji: "👖", type: "win",  probability: 2 },   // Prize 3 (2%)
-                { id: 'TRY_AGAIN_3', label: "Try Again",                  emoji: "😔", type: "lose", probability: 30 },  // Try Again 3 (30%)
-                { id: 'HOODIE',      label: "Kyrosil Hoodie",             emoji: "🧥", type: "win",  probability: 2 },   // Prize 4 (2%)
-                { id: 'GREEK',       label: "₺1500 Yunandan Gelsin",      emoji: "🇬🇷", type: "win",  probability: 1 },   // Prize 5 (1%)
-                { id: 'IGA',         label: "1 Day IGA PASS",             emoji: "✈️", type: "win",  probability: 0.8 }, // Prize 6 (0.8%)
-                { id: 'TURKISH_AIR', label: "$100 THY Gift Card",         emoji: "✈️", type: "win",  probability: 0.2 }  // Prize 7 (0.2%)
-                // Total: 2+30+2+30+2+30+2+1+0.8+0.2 = 100%
+                { id: 'STARBUCKS', label: "$5 / ₺200 Starbucks", emoji: "☕", type: "win", probability: 2 },
+                { id: 'TRY_AGAIN_1', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
+                { id: 'CARREFOUR', label: "€10 / ₺350 Carrefour", emoji: "🛒", type: "win", probability: 2 },
+                { id: 'TRY_AGAIN_2', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
+                { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 2 },
+                { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
+                { id: 'HOODIE', label: "Kyrosil Hoodie", emoji: "🧥", type: "win", probability: 2 },
+                { id: 'GREEK', label: "₺1500 Yunandan Gelsin", emoji: "🇬🇷", type: "win", probability: 1 },
+                { id: 'IGA', label: "1 Day IGA PASS", emoji: "✈️", type: "win", probability: 0.8 },
+                { id: 'TURKISH_AIR', label: "$100 THY Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
             ];
             const numberOfPrizes = segments.length;
             const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
             if (Math.abs(totalProb - 100) > 0.01) { console.error(`Probabilities sum to ${totalProb}, not 100!`); alert("Config Error!"); if(spinButton) spinButton.disabled = true;}
 
-            // --- Animation, Drawing, Logic Functions --- (Remain the same as previous Canvas version)
             let isSpinning = false;
-            let currentRotation = 0; // Radians
-            let targetRotation = 0;  // Radians
+            let currentRotation = 0;
+            let targetRotation = 0;
             let spinStartTime = null;
             let animationFrameId = null;
             let clickInterval;
             let determinedWinnerSegment = null;
+            let lastSegmentIndex = -1;
 
-            function drawSegment(index, color) { /* ... (same canvas drawing code) ... */
-                const startAngle = index * visualSegmentAngle; const endAngle = startAngle + visualSegmentAngle;
-                ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.arc(centerX, centerY, radius, startAngle, endAngle, false); ctx.closePath(); ctx.fillStyle = color; ctx.fill();
-                ctx.strokeStyle = '#ccc'; ctx.lineWidth = 1; ctx.stroke();
+            function drawSegment(index, color) {
+                const startAngle = index * visualSegmentAngle;
+                const endAngle = startAngle + visualSegmentAngle;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.shadowColor = '#ff006e';
+                ctx.shadowBlur = 15;
             }
-            function drawSegmentText(index) { /* ... (same canvas drawing code, uses new segments order) ... */
-                const prizeIndex = index % numberOfPrizes; const segmentData = segments[prizeIndex]; if (!segmentData) return;
+            function drawSegmentText(index) {
+                const prizeIndex = index % numberOfPrizes;
+                const segmentData = segments[prizeIndex];
+                if (!segmentData) return;
                 const angle = index * visualSegmentAngle + visualSegmentAngle / 2;
-                ctx.save(); ctx.translate(centerX, centerY); ctx.rotate(angle); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = textColor; ctx.font = textFont;
-                const textRadius = radius * 0.65; const text = `${segmentData.emoji || ''} ${segmentData.label}`; ctx.fillText(text, textRadius, 0); ctx.restore();
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle);
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = textColor;
+                ctx.font = textFont;
+                const textRadius = radius * 0.6;
+                const maxWidth = radius * 0.8;
+                const text = `${segmentData.emoji || ''} ${segmentData.label}`;
+                ctx.fillText(text, textRadius, 0, maxWidth);
+                ctx.restore();
             }
-            function drawWheel() { /* ... (same canvas drawing code) ... */
-                ctx.clearRect(0, 0, canvasSize, canvasSize); ctx.beginPath(); ctx.arc(centerX, centerY, radius + 2, 0, 2 * Math.PI, false); ctx.strokeStyle = '#ecf0f1'; ctx.lineWidth = 5; ctx.stroke();
-                for (let i = 0; i < visualSegmentCount; i++) { drawSegment(i, colors[i % colors.length]); drawSegmentText(i); }
+            function drawWheel() {
+                ctx.clearRect(0, 0, canvasSize, canvasSize);
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius + 3, 0, 2 * Math.PI, false);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 6;
+                ctx.stroke();
+                ctx.shadowColor = '#ff006e';
+                ctx.shadowBlur = 15;
+                for (let i = 0; i < visualSegmentCount; i++) {
+                    drawSegment(i, colors[i % colors.length]);
+                    drawSegmentText(i);
+                }
+                ctx.shadowBlur = 0;
+                for (let i = 0; i < visualSegmentCount; i++) {
+                    const angle = i * visualSegmentAngle;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
+                    ctx.strokeStyle = '#888';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
             }
             function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-            function spinAnimationLoop(timestamp) { /* ... (same animation loop code) ... */
-                if (!spinStartTime) { spinStartTime = timestamp; } const elapsed = timestamp - spinStartTime; const duration = spinDurationSeconds * 1000;
-                let progress = Math.min(elapsed / duration, 1); let easedProgress = easeOutCubic(progress);
-                const rotationDifference = targetRotation - currentRotation; const angleNow = currentRotation + rotationDifference * easedProgress;
-                ctx.clearRect(0, 0, canvasSize, canvasSize); ctx.save(); ctx.translate(centerX, centerY); ctx.rotate(angleNow); ctx.translate(-centerX, -centerY); drawWheel(); ctx.restore();
-                if (progress < 1) { animationFrameId = requestAnimationFrame(spinAnimationLoop); }
-                else { currentRotation = targetRotation % (2 * Math.PI); handleSpinEnd(); } // Update currentRotation here too
+            function spinAnimationLoop(timestamp) {
+                if (!spinStartTime) { spinStartTime = timestamp; }
+                const elapsed = timestamp - spinStartTime;
+                const duration = spinDurationSeconds * 1000;
+                let progress = Math.min(elapsed / duration, 1);
+                let easedProgress = easeOutCubic(progress);
+                const rotationDifference = targetRotation - currentRotation;
+                const angleNow = currentRotation + rotationDifference * easedProgress;
+                ctx.clearRect(0, 0, canvasSize, canvasSize);
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angleNow);
+                ctx.translate(-centerX, -centerY);
+                drawWheel();
+                ctx.restore();
+                const currentSegmentIndex = Math.floor(((angleNow % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI) / visualSegmentAngle) % visualSegmentCount;
+                if (isSpinning && lastSegmentIndex !== currentSegmentIndex) {
+                    playSound(clickSound);
+                    lastSegmentIndex = currentSegmentIndex;
+                }
+                if (progress < 1) {
+                    animationFrameId = requestAnimationFrame(spinAnimationLoop);
+                } else {
+                    currentRotation = targetRotation % (2 * Math.PI);
+                    handleSpinEnd();
+                }
             }
-            function determineWinnerByProbability(segmentData) { /* ... (same weighted random logic) ... */
-                 const randomPick = Math.random() * 100; let cumulativeProbability = 0; for (const segment of segmentData) { cumulativeProbability += segment.probability; if (randomPick < cumulativeProbability) return segment; } return segmentData[segmentData.length - 1];
+            function determineWinnerByProbability(segmentData) {
+                const randomPick = Math.random() * 100;
+                let cumulativeProbability = 0;
+                for (const segment of segmentData) {
+                    cumulativeProbability += segment.probability;
+                    if (randomPick < cumulativeProbability) return segment;
+                }
+                return segmentData[segmentData.length - 1];
             }
-            function checkSpinLock() { /* ... (same lock check) ... */
-                 const lastSpinTime = localStorage.getItem(localStorageKey); if (!lastSpinTime) return false; const timeDiff = Date.now() - parseInt(lastSpinTime, 10); return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
+            function checkSpinLock() {
+                const lastSpinTime = localStorage.getItem(localStorageKey);
+                if (!lastSpinTime) return false;
+                const timeDiff = Date.now() - parseInt(lastSpinTime, 10);
+                return (timeDiff / (1000 * 60 * 60)) < lockDurationHours;
             }
-            function setSpinLock() { /* ... (same lock set) ... */
-                 localStorage.setItem(localStorageKey, Date.now().toString());
+            function setSpinLock() {
+                localStorage.setItem(localStorageKey, Date.now().toString());
             }
-            function playSound(soundElement) { /* ... (same sound play) ... */
-                  if (soundElement?.play) { soundElement.currentTime = 0; soundElement.play().catch(e => console.warn("Sound play failed:", e)); }
+            function playSound(soundElement) {
+                if (soundElement?.play) {
+                    soundElement.currentTime = 0;
+                    soundElement.play().catch(e => console.warn("Sound play failed:", e));
+                }
             }
-            function startClickSoundLoop() { /* ... (same click loop start) ... */
-                 stopClickSoundLoop(); const playLoop = () => { if (!isSpinning) return; playSound(clickSound); clickInterval = setTimeout(playLoop, 120 + Math.random() * 80); }; playLoop();
+            function startClickSoundLoop() {
+                stopClickSoundLoop();
             }
-            function stopClickSoundLoop() { /* ... (same click loop stop) ... */
-                 clearTimeout(clickInterval);
+            function stopClickSoundLoop() {
+                clearTimeout(clickInterval);
+                lastSegmentIndex = -1;
             }
-            function validateInputs() { /* ... (same input validation) ... */
-                 const emailValue = emailInput.value.trim(); const instagramValue = instagramInput.value.trim(); if (!emailValue || !instagramValue) { alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!"); return false; } if (!/\S+@\S+\.\S+/.test(emailValue)) { alert("Please enter a valid email address."); return false; } return true;
+            function validateInputs() {
+                const emailValue = emailInput.value.trim();
+                const instagramValue = instagramInput.value.trim();
+                if (!emailValue || !instagramValue) {
+                    alert("PLEASE ENTER YOUR EMAIL AND INSTAGRAM HANDLE!");
+                    return false;
+                }
+                if (!/\S+@\S+\.\S+/.test(emailValue)) {
+                    alert("Please enter a valid email address.");
+                    return false;
+                }
+                return true;
             }
-            function sendSpinResultToBackend(dataToSend) { /* ... (same Formspree function) ... */
-                 const formspreeEndpoint = 'https://formspree.io/f/xblgznvz'; fetch(formspreeEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(dataToSend) }) .then(response => { if (response.ok) { console.log('Formspree submission successful.'); return response.json(); } else { response.json().then(data => { console.error('Formspree submission error:', response.statusText, data); }); } }) .then(data => { if(data) console.log('Formspree success response:', data); }) .catch(error => { console.error('Network error sending to Formspree:', error); });
+            function sendSpinResultToBackend(dataToSend) {
+                const formspreeEndpoint = 'https://formspree.io/f/xblgznvz';
+                fetch(formspreeEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(dataToSend)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Formspree submission successful.');
+                        return response.json();
+                    } else {
+                        response.json().then(data => {
+                            console.error('Formspree submission error:', response.statusText, data);
+                        });
+                    }
+                })
+                .then(data => {
+                    if(data) console.log('Formspree success response:', data);
+                })
+                .catch(error => {
+                    console.error('Network error sending to Formspree:', error);
+                });
             }
-            function spinWheel() { /* ... (same spin logic, uses new segments) ... */
-                if (isSpinning) return; if (checkSpinLock()) { alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`); return; } if (!validateInputs()) return;
-                isSpinning = true; spinButton.disabled = true; determinedWinnerSegment = null; spinStartTime = null;
-                determinedWinnerSegment = determineWinnerByProbability(segments); const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
-                const visualTargetIndex = winningPrizeIndex % visualSegmentCount; const targetSegmentMiddleAngle = visualTargetIndex * visualSegmentAngle + visualSegmentAngle / 2;
-                const randomExtraRotation = Math.random() * 2 * Math.PI;
-                // Calculate how much rotation needed from current position to new target position
-                // Normalize angles to be positive within 0 to 2*PI
+            function spinWheel() {
+                if (isSpinning) return;
+                if (checkSpinLock()) {
+                    alert(`Sorry, you can only spin the wheel once every ${lockDurationHours} hours.`);
+                    return;
+                }
+                if (!validateInputs()) return;
+                isSpinning = true;
+                spinButton.disabled = true;
+                determinedWinnerSegment = null;
+                spinStartTime = null;
+                determinedWinnerSegment = determineWinnerByProbability(segments);
+                const winningPrizeIndex = segments.findIndex(s => s.id === determinedWinnerSegment.id);
+                const visualTargetIndex = winningPrizeIndex % visualSegmentCount;
+                const targetSegmentMiddleAngle = visualTargetIndex * visualSegmentAngle + visualSegmentAngle / 2;
+                const randomExtraRotation = Math.random() * visualSegmentAngle * 0.5;
                 const normalizedCurrentRotation = (currentRotation % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI);
-                const desiredStopAngle = (2 * Math.PI - targetSegmentMiddleAngle + (Math.PI / 2)) % (2* Math.PI) ; // Adjusting stop angle reference if needed - let's try aligning segment middle to top (0 or 2*PI)
-                const angleToStopAt = (2 * Math.PI - targetSegmentMiddleAngle ) % (2* Math.PI); // Target angle position relative to 0 (top)
-
-
-                let rotationNeeded = angleToStopAt - normalizedCurrentRotation;
-                 if (rotationNeeded < 0) { // Ensure it spins forward
-                     rotationNeeded += (2 * Math.PI);
-                 }
-
-                 targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI) + randomExtraRotation;
-
-
-                cancelAnimationFrame(animationFrameId); startClickSoundLoop(); animationFrameId = requestAnimationFrame(spinAnimationLoop);
+                const desiredStopAngle = (2 * Math.PI - targetSegmentMiddleAngle) % (2 * Math.PI);
+                let rotationNeeded = desiredStopAngle - normalizedCurrentRotation;
+                if (rotationNeeded < 0) {
+                    rotationNeeded += (2 * Math.PI);
+                }
+                targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI) + randomExtraRotation;
+                cancelAnimationFrame(animationFrameId);
+                startClickSoundLoop();
+                animationFrameId = requestAnimationFrame(spinAnimationLoop);
             }
-             function handleSpinEnd() { /* ... (same end handling logic) ... */
-                 isSpinning = false; stopClickSoundLoop(); cancelAnimationFrame(animationFrameId);
-                 // currentRotation = targetRotation % (2 * Math.PI); // Update current rotation after spin stops
+            function handleSpinEnd() {
+                isSpinning = false;
+                stopClickSoundLoop();
+                cancelAnimationFrame(animationFrameId);
+                if (determinedWinnerSegment) {
+                    const submissionData = {
+                        email: emailInput.value.trim(),
+                        instagram: instagramInput.value.trim(),
+                        prizeWon: determinedWinnerSegment.label,
+                        prizeID: determinedWinnerSegment.id,
+                        spinTimestamp: new Date().toISOString()
+                    };
+                    sendSpinResultToBackend(submissionData);
+                    showResult(determinedWinnerSegment);
+                } else {
+                    console.error("Spin ended but no winner determined!");
+                    showResult(segments.find(s => s.type === 'lose') || segments[0]);
+                }
+                setSpinLock();
+            }
+            function showResult(result) {
+                resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
+                resultMessage.innerHTML = `<span style="font-size: 1.5em">${result.emoji || ''}</span> ${result.label}`;
+                if (result.type === 'win') {
+                    playSound(winSound);
+                    triggerConfetti();
+                } else {
+                    playSound(loseSound);
+                }
+                if(resultPopup) resultPopup.classList.add('show');
+            }
+            function triggerConfetti() {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 400,
+                        spread: 180,
+                        origin: { y: 0.5 },
+                        colors: ['#ff006e', '#ff4d94', '#ffd700', '#00ff9f', '#ff00ff']
+                    });
+                } else {
+                    console.warn("Confetti function not found.");
+                }
+            }
+            function populateExternalPrizeList() {
+                if (!prizeListUl) return;
+                prizeListUl.innerHTML = '';
+                const uniquePrizesToShow = segments.filter(s => s.type === 'win');
+                uniquePrizesToShow.forEach(segment => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${segment.emoji || '🎁'}</span> ${segment.label}`;
+                    prizeListUl.appendChild(li);
+                });
+                if (segments.some(s => s.type === 'lose')) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>😔</span> Try Again`;
+                    prizeListUl.appendChild(li);
+                }
+            }
 
-                 if (determinedWinnerSegment) {
-                     const submissionData = { email: emailInput.value.trim(), instagram: instagramInput.value.trim(), prizeWon: determinedWinnerSegment.label, prizeID: determinedWinnerSegment.id, spinTimestamp: new Date().toISOString() };
-                     sendSpinResultToBackend(submissionData); showResult(determinedWinnerSegment);
-                 } else { console.error("Spin ended but no winner determined!"); showResult(segments.find(s => s.type === 'lose') || segments[0]); }
-                 setSpinLock();
-             }
-             function showResult(result) { /* ... (same result display) ... */
-                 resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!'; resultMessage.innerHTML = `<span>${result.emoji || ''}</span> ${result.label}`;
-                 if (result.type === 'win') { playSound(winSound); triggerConfetti(); } else { playSound(loseSound); } if(resultPopup) resultPopup.classList.add('show');
-             }
-             function triggerConfetti() { /* ... (same confetti) ... */
-                   if (typeof confetti === 'function') { confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } }); } else { console.warn("Confetti function not found."); }
-             }
-             function populateExternalPrizeList() { /* ... (same list population) ... */
-                  if (!prizeListUl) return; prizeListUl.innerHTML = ''; const uniquePrizesToShow = segments.filter(s => s.type === 'win');
-                  uniquePrizesToShow.forEach(segment => { const li = document.createElement('li'); li.innerHTML = `<span>${segment.emoji || '🎁'}</span> ${segment.label}`; prizeListUl.appendChild(li); });
-                  if (segments.some(s => s.type === 'lose')) { const li = document.createElement('li'); li.innerHTML = `<span>😔</span> Try Again`; prizeListUl.appendChild(li); }
-             }
-
-            // Initial Setup & Event Listeners ... (same) ...
-            drawWheel(); populateExternalPrizeList();
-            if (spinButton) { spinButton.addEventListener('click', spinWheel); } else { console.error("Spin button element not found!"); }
-            if (closePopupButton) { closePopupButton.addEventListener('click', () => { if(resultPopup) resultPopup.classList.remove('show'); }); } else { console.error("Popup close button not found!"); }
-            if (checkSpinLock()) { if(spinButton) spinButton.disabled = true; } else { if(spinButton) spinButton.disabled = false; }
-
-        }); // DOMContentLoaded End
+            drawWheel();
+            populateExternalPrizeList();
+            if (spinButton) {
+                spinButton.addEventListener('click', spinWheel);
+            } else {
+                console.error("Spin button element not found!");
+            }
+            if (closePopupButton) {
+                closePopupButton.addEventListener('click', () => {
+                    if(resultPopup) resultPopup.classList.remove('show');
+                });
+            } else {
+                console.error("Popup close button not found!");
+            }
+            if (checkSpinLock()) {
+                if(spinButton) spinButton.disabled = true;
+            } else {
+                if(spinButton) spinButton.disabled = false;
+            }
+        });
     </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c4616c2d71b0d5',t:'MTc0NjY1OTMxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
