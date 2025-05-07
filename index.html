@@ -372,10 +372,6 @@
         </div>
     </div>
 
-    <audio id="click-sound" src="click.mp3" preload="auto"></audio>
-    <audio id="win-sound" src="win.mp3" preload="auto"></audio>
-    <audio id="lose-sound" src="lose.mp3" preload="auto"></audio>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const canvas = document.getElementById('prizeWheelCanvas');
@@ -386,11 +382,8 @@
             const resultTitle = document.getElementById('result-title');
             const resultMessage = document.getElementById('result-message');
             const closePopupButton = document.getElementById('close-popup');
-            const clickSound = document.getElementById('click-sound');
-            const winSound = document.getElementById('win-sound');
-            const loseSound = document.getElementById('lose-sound');
-            const prizeListUl = document.getElementById('prize-list-ul');
             const pointer = document.getElementById('pointer');
+            const prizeListUl = document.getElementById('prize-list-ul');
 
             if (!canvas || !canvas.getContext) { alert("Canvas not supported!"); if(spinButton) spinButton.disabled = true; return; }
             const ctx = canvas.getContext('2d');
@@ -410,15 +403,15 @@
             const textFont = 'bold 12px Poppins, sans-serif';
 
             const segments = [
-                { id: 'STARBUCKS', label: "$5 / ₺200 Starbucks", emoji: "☕", type: "win", probability: 2 },
                 { id: 'TRY_AGAIN_1', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
-                { id: 'CARREFOUR', label: "€10 / ₺350 Carrefour", emoji: "🛒", type: "win", probability: 2 },
+                { id: 'STARBUCKS', label: "$5 / ₺200 Starbucks", emoji: "☕", type: "win", probability: 2 },
                 { id: 'TRY_AGAIN_2', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
-                { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 2 },
+                { id: 'CARREFOUR', label: "€10 / ₺350 Carrefour", emoji: "🛒", type: "win", probability: 2 },
                 { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
+                { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 2 },
+                { id: 'TRY_AGAIN_4', label: "Try Again", emoji: "😔", type: "lose", probability: 30 },
                 { id: 'HOODIE', label: "Kyrosil Hoodie", emoji: "🧥", type: "win", probability: 2 },
                 { id: 'TRENDYOL', label: "Trendyol 30 EUR/1500 TL Gift Code", emoji: "🛍️", type: "win", probability: 1 },
-                { id: 'IGA', label: "1 Day IGA PASS", emoji: "✈️", type: "win", probability: 0.8 },
                 { id: 'TURKISH_AIR', label: "$100 THY Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
             ];
             const numberOfPrizes = segments.length;
@@ -430,8 +423,6 @@
             let targetRotation = 0;
             let spinStartTime = null;
             let animationFrameId = null;
-            let clickInterval;
-            let determinedWinnerSegment = null;
             let lastSegmentIndex = -1;
 
             function drawSegment(index, color) {
@@ -514,7 +505,6 @@
                 ctx.restore();
                 const currentSegmentIndex = Math.floor(((angleNow % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI)) / visualSegmentAngle) % visualSegmentCount;
                 if (isSpinning && lastSegmentIndex !== currentSegmentIndex) {
-                    playSound(clickSound);
                     pointer.classList.remove('tick');
                     void pointer.offsetWidth;
                     pointer.classList.add('tick');
@@ -551,22 +541,6 @@
 
             function setSpinLock() {
                 localStorage.setItem(localStorageKey, Date.now().toString());
-            }
-
-            function playSound(soundElement) {
-                if (soundElement?.play) {
-                    soundElement.currentTime = 0;
-                    soundElement.play().catch(e => console.warn("Sound play failed:", e));
-                }
-            }
-
-            function startClickSoundLoop() {
-                stopClickSoundLoop();
-            }
-
-            function stopClickSoundLoop() {
-                clearTimeout(clickInterval);
-                lastSegmentIndex = -1;
             }
 
             function validateInputs() {
@@ -631,19 +605,17 @@
                 targetRotation = currentRotation + rotationNeeded + (minSpins * 2 * Math.PI);
                 console.log(`Spinning to segment ${targetSegmentIndex}: ${determinedWinnerSegment.label}`);
                 cancelAnimationFrame(animationFrameId);
-                startClickSoundLoop();
                 animationFrameId = requestAnimationFrame(spinAnimationLoop);
             }
 
             function handleSpinEnd() {
                 isSpinning = false;
-                stopClickSoundLoop();
                 cancelAnimationFrame(animationFrameId);
                 const finalAngle = targetRotation % (2 * Math.PI);
                 const finalSegmentIndex = Math.floor((finalAngle / visualSegmentAngle)) % visualSegmentCount;
                 console.log(`Final angle: ${finalAngle}, Final segment: ${finalSegmentIndex} (${segments[finalSegmentIndex].label})`);
-                if (segments[finalSegmentIndex].id !== determinedWinnerSegment.id) {
-                    console.warn(`Mismatch detected! Expected ${determinedWinnerSegment.label}, got ${segments[finalSegmentIndex].label}. Correcting...`);
+                if (finalSegmentIndex !== determinedWinnerSegment.visualIndex) {
+                    console.warn(`Mismatch detected! Expected ${determinedWinnerSegment.label} at ${determinedWinnerSegment.visualIndex}, got ${segments[finalSegmentIndex].label} at ${finalSegmentIndex}. Correcting...`);
                     const correction = (determinedWinnerSegment.visualIndex - finalSegmentIndex + visualSegmentCount) % visualSegmentCount;
                     targetRotation += correction * visualSegmentAngle;
                     ctx.clearRect(0, 0, canvasSize, canvasSize);
@@ -670,12 +642,6 @@
             function showResult(result) {
                 resultTitle.textContent = result.type === 'win' ? '🎉 Congratulations! 🎉' : 'Better Luck Next Time!';
                 resultMessage.innerHTML = `<span style="font-size: 1.5em">${result.emoji || ''}</span> ${result.label}`;
-                if (result.type === 'win') {
-                    playSound(winSound);
-                    triggerConfetti();
-                } else {
-                    playSound(loseSound);
-                }
                 if(resultPopup) resultPopup.classList.add('show');
             }
 
