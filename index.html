@@ -403,16 +403,16 @@
             const textFont = 'bold 12px Poppins, sans-serif';
 
             const segments = [
-                { id: 'TRY_AGAIN_1', label: "Try Again", emoji: "😔", type: "lose", probability: 22.2 },
+                { id: 'TRY_AGAIN_1', label: "Try Again", emoji: "😔", type: "lose", probability: 20 },
                 { id: 'STARBUCKS', label: "$5 / ₺200 Starbucks", emoji: "☕", type: "win", probability: 2 },
-                { id: 'TRY_AGAIN_2', label: "Try Again", emoji: "😔", type: "lose", probability: 22.2 },
+                { id: 'TRY_AGAIN_2', label: "Try Again", emoji: "😔", type: "lose", probability: 20 },
                 { id: 'CARREFOUR', label: "€10 / ₺350 Carrefour", emoji: "🛒", type: "win", probability: 2 },
-                { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 22.2 },
+                { id: 'TRY_AGAIN_3', label: "Try Again", emoji: "😔", type: "lose", probability: 20 },
                 { id: 'MAVI', label: "₺400 Mavi Point", emoji: "👖", type: "win", probability: 2 },
-                { id: 'TRY_AGAIN_4', label: "Try Again", emoji: "😔", type: "lose", probability: 24.2 },
+                { id: 'TRY_AGAIN_4', label: "Try Again", emoji: "😔", type: "lose", probability: 20 },
                 { id: 'HOODIE', label: "Kyrosil Hoodie", emoji: "🧥", type: "win", probability: 2 },
-                { id: 'TRENDYOL', label: "Trendyol 30 EUR/1500 TL Gift Code", emoji: "🛍️", type: "win", probability: 1 },
-                { id: 'TURKISH_AIR', label: "$100 THY Gift Card", emoji: "✈️", type: "win", probability: 0.2 }
+                { id: 'TRENDYOL', label: "Trendyol 30 EUR/1500 TL Gift Code", emoji: "🛍️", type: "win", probability: 7 },
+                { id: 'TURKISH_AIR', label: "$100 THY Gift Card", emoji: "✈️", type: "win", probability: 5 }
             ];
             const numberOfPrizes = segments.length;
             const totalProb = segments.reduce((sum, s) => sum + s.probability, 0);
