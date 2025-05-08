@@ -595,7 +595,7 @@
                 spinStartTime = null;
                 determinedWinnerSegment = determineWinnerByProbability(segments);
                 const targetSegmentIndex = determinedWinnerSegment.visualIndex;
-                const targetSegmentMiddleAngle = (visualSegmentAngle * targetSegmentIndex) + (visualSegmentAngle / 2);
+                const targetSegmentMiddleAngle = (visualSegmentAngle * (visualSegmentCount - 1 - targetSegmentIndex)) + (visualSegmentAngle / 2); // Reverse order
                 const normalizedCurrentRotation = (currentRotation % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
                 const desiredStopAngle = (2 * Math.PI - targetSegmentMiddleAngle + (Math.PI / 2)) % (2 * Math.PI);
                 let rotationNeeded = desiredStopAngle - normalizedCurrentRotation;
@@ -612,7 +612,7 @@
                 isSpinning = false;
                 cancelAnimationFrame(animationFrameId);
                 const finalAngle = targetRotation % (2 * Math.PI);
-                const finalSegmentIndex = Math.floor((finalAngle / visualSegmentAngle)) % visualSegmentCount;
+                const finalSegmentIndex = Math.floor(((finalAngle + visualSegmentAngle / 2) % (2 * Math.PI)) / visualSegmentAngle) % visualSegmentCount;
                 console.log(`Final angle: ${finalAngle}, Final segment: ${finalSegmentIndex} (${segments[finalSegmentIndex].label})`);
                 if (finalSegmentIndex !== determinedWinnerSegment.visualIndex) {
                     console.warn(`Mismatch detected! Expected ${determinedWinnerSegment.label} at ${determinedWinnerSegment.visualIndex}, got ${segments[finalSegmentIndex].label} at ${finalSegmentIndex}. Correcting...`);
